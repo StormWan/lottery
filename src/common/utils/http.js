@@ -3,7 +3,7 @@
  * 请求拦截、响应拦截、错误统一处理
  */
 import axios from 'axios'
-import router from '../../router'
+// import router from '../../router'
 import store from '../../store'
 import { Toast } from 'vant'
 
@@ -23,18 +23,10 @@ const tip = msg => {
  * 跳转登录页
  * 携带当前页面路由，以期在登录页面完成登录后返回当前页面
  */
-const toLogin = () => {
-  router.go(-1)
-  // router.replace({
-    path: '/'
-    // path: urlDel('code'),
-    // query: {
-    //   redirect: router.currentRoute.fullPath
-    // }
-  // })
-  // console.log(urlDel('code'))
-  // console.log(router.currentRoute.fullPath)
-}
+// const toLogin = () => {
+//   router.go(-1)
+//   path: '/'
+// }
 
 /**
  * 请求失败后的错误统一处理
