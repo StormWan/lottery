@@ -7,7 +7,7 @@
                 :required="required"
                 @click="show">
             <!-- 显示当前值，没有值显示提示文字 -->
-            {{ text ? text : placeholder }}
+            <span id="cellP">{{ text ? text : placeholder }}</span>
             <!-- 自定义错误显示 -->
             <div
                     v-if="$attrs.error"
@@ -20,12 +20,13 @@
             <!-- $attrs 可以把根节点的attr放到目标组件上，如此可以像使用 DatePicker 组件一样使用这个新组件 -->
             <van-datetime-picker
                     v-bind="$attrs"
-                    :type="type"
+                    type="datetime"
                     title="请选择日期"
                     :min-date="minDate"
                     :max-date="maxDate"
+                    v-model="currentDate"
                     @cancel="cancel"
-                    @confirm="confirm"
+                    @confirm="confirm(currentDate)"
             />
         </van-actionsheet>
     </div>
@@ -80,7 +81,8 @@ export default {
     return {
       selectedItem: null,
       isShowPicker: false,
-      type: null
+      text: '',
+      currentDate: new Date()
     }
   },
   components: {
@@ -106,10 +108,6 @@ export default {
         return 'yyyy-MM'
       }
       return ''
-    },
-    text () {
-      console.log('---' + this.value ? this.dateFormat(this.value, this.formatFormula) : '')
-      return this.value ? this.dateFormat(this.value, this.formatFormula) : ''
     }
   },
   methods: {
@@ -151,9 +149,10 @@ export default {
     confirm (value) {
       // 更新 v-model 绑定的 value 值，第二个参数是毫秒数，第三个参数是原始值，根据自己的项目的数据结构来修改
       // input 事件同时也会触发 vee-validate 的验证事件
-      this.$emit('input', value.getTime(), value)
+      this.$emit('input', value)
       // onChange事件，虽然重写 @input可以实现，但这样会破坏 v-model 写法。
-      this.$emit('change', value.getTime(), value)
+      this.$emit('change', value)
+      document.getElementById('cellP').innerText = value ? this.dateFormat(value, this.formatFormula) : ''
       console.log(value)
       this.cancel()
     },

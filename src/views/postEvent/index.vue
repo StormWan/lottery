@@ -13,10 +13,10 @@
             </van-row>
             <div id="basicSettings">
                 <van-row type="flex">
-                    <van-col ><img :src="imgUploader" class="productImg"/></van-col>
+                    <van-col ><img :src="imgGood" class="productImg"/></van-col>
                     <van-col >
-                        <van-field v-model="filedValue" type="textarea" placeholder="请输入奖品名称" size="large" id="goodsTitle" autosize/>
-                        <van-stepper v-model="stepperValue" integer :min="1" :max="100" :step="1" @overlimit="overlimit"/>
+                        <van-field v-model="goodsTitle" type="textarea" placeholder="请输入奖品名称" size="large" id="goodsTitle" ref="sad" autosize/>
+                        <van-stepper v-model="goodsNumber" integer :min="1" :max="100" :step="1" @overlimit="overlimit"/>
                     </van-col>
                 </van-row>
                 <div @click="show = true">
@@ -24,8 +24,8 @@
                         <van-col><p>开奖方式</p></van-col>
                         <van-col>
                             <div class="rightSetting">
-                            <span id ="p">{{openAway}}</span>
-                            <van-icon name="arrow"/>
+                                <span id ="p">{{openAway}}</span>
+                                <van-icon name="arrow"/>
                             </div>
                         </van-col>
                     </van-row>
@@ -34,32 +34,14 @@
                     <van-picker show-toolbar :columns="columns" @confirm="show = false" @cancel="show = false" @change="onChange"/>
                 </van-popup>
                 <div  @click="show1 = true" v-show="chooseTime">
-<!--                    <van-row type="flex" >-->
-<!--                        <van-col><p>开奖时间</p></van-col>-->
-<!--                        <van-col>-->
-<!--                            <div class="rightSetting">-->
-                                <field-date-card
-                                        label="开奖时间"
-                                        v-model="time"
-                                        type="datetime"
-                                        :max-date="maxDate"
-                                        :min-date="minDate"
-                                />
-<!--                                <span>{{timeText ? timeText : timePlaceholder}}</span>-->
-<!--                                <van-icon name="clock-o"/>-->
-<!--                            </div>-->
-<!--                        </van-col>-->
-<!--                    </van-row>-->
+                    <field-date-card label="开奖时间" v-model="time" type="datetime" :max-date="maxDate" :min-date="minDate"/>
                 </div>
-<!--                <van-popup v-model="show1" position="bottom" :overlay="false">-->
-<!--                    <van-datetime-picker v-model="currentDate" type="datetime" :min-date="minDate" :max-date="maxDate" @change="getLotteryTime" @confirm="show1 = false" @cancel="show1 = false"/>-->
-<!--                </van-popup>-->
                 <div v-show="choosePerson" >
                     <van-row type="flex" >
                         <van-col><p>开奖人数</p></van-col>
                         <van-col>
                             <div class="rightSetting">
-                                <van-stepper  v-model="stepperValue1" integer :min="1" :max="500" :step="1" @overlimit="overlimit1"/>
+                                <van-stepper  v-model="personNumber" integer :min="1" :max="500" :step="1" @overlimit="overlimit1"/>
                             </div>
                         </van-col>
                     </van-row>
@@ -71,7 +53,7 @@
                 <van-col><p>抽奖说明</p></van-col>
                 <van-col><div class="rightSetting"><span>非必填</span></div></van-col>
             </van-row>
-            <div id="description"><van-field v-model="filedValue1" type="textarea" placeholder="请填写此次活动的说明" autosize/></div>
+            <div id="description"><van-field v-model="lotterAway" type="textarea" placeholder="请填写此次活动的说明" autosize/></div>
             <!--    高级设置    -->
             <van-row type="flex" class="title">
                 <van-col><van-icon name="setting"/></van-col>
@@ -141,19 +123,18 @@ export default {
   },
   data () {
     return {
-      time: undefined,
-      imgUploader: require('../../assets/image/weichat.png'),
-      filedValue: '',
-      filedValue1: '',
-      stepperValue: null,
-      stepperValue1: null,
+      imgGood: require('../../assets/image/weichat.png'),
+      goodsTitle: '',
+      lotterAway: '',
+      goodsNumber: '',
       show: false,
       show1: false,
       show2: false,
       showKayboard: false,
       columns: ['定时开奖', '满人开奖'],
+      time: undefined,
       timePlaceholder: '请选择开奖时间',
-      currentDate: '',
+      lotteryTime: '',
       minDate: new Date(),
       maxDate: new Date(2019, 12, 30),
       sponsor1: '贝贝无敌有限公司赞助 ',
@@ -163,48 +144,79 @@ export default {
       personNumber: '1'
     }
   },
+  mounted () {
+    if (localStorage.getItem('myPreview')) {
+      this.goodsNumber = JSON.parse(localStorage.getItem('myPreview')).goodsNumber
+      this.sponsor1 = JSON.parse(localStorage.getItem('myPreview')).sponsor1
+      this.goodsTitle = JSON.parse(localStorage.getItem('myPreview')).goodsTitle
+      this.lotterAway = JSON.parse(localStorage.getItem('myPreview')).lotterAway
+      this.lotteryTime = JSON.parse(localStorage.getItem('myPreview')).lotteryTime
+      this.imgGood = JSON.parse(localStorage.getItem('myPreview')).imgGood
+    }
+    // console.log(this.$refs.sad)
+    // let afterRemove = new Date().getMinutes() + 1
+    // console.log(afterRemove)
+    // setTimeout(localStorage.removeItem('myPreview'), afterRemove)
+  },
   methods: {
     onClickLeft () {
       this.$router.go(-1)
     },
+    // 奖品数量限制
     overlimit () {
       Toast('奖品数量最少为 1 个，最多为 100 个')
     },
+    // 参与人数数量限制
     overlimit1 () {
-      Toast('奖品数量最少为 1 个，最多为 500 个')
+      Toast('参与人数最少为 1 个，最多为 500 个')
     },
+    // 赞助商信息
     toSponsor () {
       this.$router.push('/')
     },
+    // 口令抽奖
     toPasswordLottery () {
       this.$router.push('/')
     },
+    // 分享助力
     toShare () {
-      this.$router.push('/')
+      this.$router.push('./shareSetting')
     },
-    onClickCommit () {
-
-    },
-    onChange (picker, value, index) { // <--选择开奖方式的方法
+    // 选择开奖方式的方法
+    onChange (picker, value, index) {
       document.getElementById('p').innerText = value
-      console.log(document.getElementById('p').innerText)
       if (value === '定时开奖') {
         this.chooseTime = true
+        this.choosePerson = false
       } else {
         this.chooseTime = false
         this.choosePerson = true
-        console.log(this.chooseTime + '----' + this.choosePerson)
       }
     },
+    // 提交数据
+    onClickCommit () {
+      let myPreview = JSON.parse(localStorage.getItem('myPreview'))
+      if (myPreview.goodsTitle !== '') {
+        if (myPreview.openAway === '定时开奖' & myPreview.lotteryTime !== '') {
+          this.$router.push('/')
+          localStorage.removeItem('myPreview')
+        }
+        else if (myPreview.openAway === '满人开奖' & myPreview) {
+
+        }
+      }
+    },
+    // 预览页面
     onClickPreview () { // <---点击预览时候先将数据存储在 localStorage,再跳转页面获取存储再 localStorage 的数据
       let myPreview = {} // <---将预览的数据存在对象俩民
-      myPreview.goodsNumber = this.stepperValue // 奖品的数量
+      myPreview.goodsNumber = this.goodsNumber // 奖品的数量
       myPreview.sponsor1 = this.sponsor1 // 赞助商
-      myPreview.goodsTitle = this.filedValue // 奖品的名字
-      myPreview.lotterAway = this.filedValue1// <--保存开奖方式
-      myPreview.lotteryTime = this.currentDate
-      myPreview.personNumber = this.stepperValue1
-      myPreview.imgGood = this.imgUploader // 奖品的图片
+      myPreview.goodsTitle = this.goodsTitle // 奖品的名字
+      myPreview.lotterAway = this.lotterAway// <抽奖说明
+      myPreview.openAway = this.openAway // 开奖方式
+      myPreview.lotteryTime = this.lotteryTime
+      myPreview.personNumber = this.personNumber
+      myPreview.imgGood = this.imgGood // 奖品的图片
       let preview = JSON.stringify(myPreview) // <--将对象转为字符串，再保存到 localStorage
       localStorage.setItem('myPreview', preview)
       console.log(JSON.parse(localStorage.getItem('myPreview')))

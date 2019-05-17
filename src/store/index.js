@@ -2,12 +2,14 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { LOGIN, LOGOUT, TITLE } from './types'
 import tabbar from './modules/tabbar'
+import saveState from './modules/saveState'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    tabbar
+    tabbar,
+    saveState
   },
   state: {
     user: {},
