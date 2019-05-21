@@ -1,5 +1,11 @@
 <template>
     <div id="preview">
+        <van-nav-bar
+                title=""
+                left-text="预览"
+                left-arrow
+                @click-left="onClickLeft"
+        />
         <img :src="imgGood" id="goodsPicture"/>
         <div id="imageButtom">
             <van-row type="flex" justify="space-between">
@@ -16,7 +22,12 @@
             <van-row type="flex" justify="space-between" >
                 <van-col>
                     <p>{{goodsTitle}}</p>
-                    <span>开奖时间： {{lotteryTime}}</span>
+                    <div v-show="chooseTime">
+                        <span>开奖时间： {{lotteryTime}}</span>
+                    </div>
+                    <div v-show="choosePerson">
+                        <span>开奖人数：{{personNumber}}</span>
+                    </div>
                 </van-col>
                 <van-col>
                     <van-icon name="more-o"/>
@@ -26,9 +37,9 @@
             <!--     头像信息       -->
             <div id="personMessage">
                 <van-row type="flex" justify="center">
-                    <van-col span="4"><img src="../../assets/image/left.png" class="imageArrow"></van-col>
+                    <van-col span="4"><img src="../../../assets/image/left.png" class="imageArrow"></van-col>
                     <van-col span="7"><p>详情介绍</p></van-col>
-                    <van-col span="4"><img src="../../assets/image/right.png" class="imageArrow"></van-col>
+                    <van-col span="4"><img src="../../../assets/image/right.png" class="imageArrow"></van-col>
                 </van-row>
             </div>
         </div>
@@ -39,9 +50,38 @@
 import { Row, Col, NavBar, Button, Actionsheet } from 'vant'
 
 export default {
-  name: 'post-Preview',
+  name: 'preview',
   data () {
     return {
+      goodsNumber: '',
+      sponsor1: '',
+      goodsTitle: '',
+      lotteryTime: '',
+      personNumber: '',
+      imgGood: '',
+      lotterAway: '',
+      openAway: '',
+      chooseTime: true,
+      choosePerson: false
+    }
+  },
+  mounted () {
+    if (localStorage.getItem('myPreview')) {
+      this.goodsNumber = JSON.parse(localStorage.getItem('myPreview')).goodsNumber
+      this.sponsor1 = JSON.parse(localStorage.getItem('myPreview')).sponsor1
+      this.goodsTitle = JSON.parse(localStorage.getItem('myPreview')).goodsTitle
+      this.lotterAway = JSON.parse(localStorage.getItem('myPreview')).lotterAway
+      this.lotteryTime = JSON.parse(localStorage.getItem('myPreview')).lotteryTime
+      this.personNumber = JSON.parse(localStorage.getItem('myPreview')).personNumber
+      this.imgGood = JSON.parse(localStorage.getItem('myPreview')).imgGood
+      this.openAway = JSON.parse(localStorage.getItem('myPreview')).openAway
+    }
+    if (JSON.parse(localStorage.getItem('myPreview')).openAway === '定时开奖') {
+      this.chooseTime = true
+      this.choosePerson = false
+    } else {
+      this.chooseTime = false
+      this.choosePerson = true
     }
   },
   components: {
@@ -51,29 +91,10 @@ export default {
     [Button.name]: Button,
     [Actionsheet.name]: Actionsheet
   },
-  props: {
-    goodsNumber: {
-      type: String,
-      default: '1'
-    },
-    sponsor1: {
-      type: String,
-      default: '由xxx赞助的活动'
-    },
-    goodsTitle: {
-      type: String,
-      default: '奖品名字'
-    },
-    lotteryTime: {
-      type: String,
-      default: '开奖时间'
-    },
-    imgGood: {
-      type: String,
-      default: require('../../assets/image/logo.png')
-    }
-  },
   methods: {
+    onClickLeft () {
+      this.$router.go(-1)
+    }
   }
 }
 </script>

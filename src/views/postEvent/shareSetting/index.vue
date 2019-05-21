@@ -8,13 +8,13 @@
         />
         <van-radio-group v-model="radio" class="radio">
             <van-cell-group>
-                <van-cell title="允许分享、助力" clickable @click="radio = '1'">
+                <van-cell title="允许分享、助力" clickable @click="getMessage1">
                     <van-radio name="1" checked-color="#07c160"/>
                 </van-cell>
-                <van-cell title="允许分享，不允许助力（中奖均等）" clickable @click="radio = '2'">
+                <van-cell title="允许分享，不允许助力（中奖均等）" clickable @click="getMessage2">
                     <van-radio name="2" checked-color="#07c160"/>
                 </van-cell>
-                <van-cell title="不允许分享、助力（私享福利）" clickable @click="radio = '2'">
+                <van-cell title="不允许分享、助力（私享福利）" clickable @click="getMessage3">
                     <van-radio name="3" checked-color="#07c160"/>
                 </van-cell>
             </van-cell-group>
@@ -44,6 +44,22 @@ export default {
   methods: {
     onClickLeft () {
       this.$router.go(-1)
+    },
+    // 选择 1
+    getMessage1 () {
+      this.radio = '1'
+      localStorage.setItem('shareRadioMessage', this.radio)
+      // this.$emit('radioMessage', this.radio)
+    },
+    getMessage2 () {
+      this.radio = '2'
+      localStorage.setItem('shareRadioMessage', this.radio)
+      // this.$emit('radioMessage', this.radio)
+    },
+    getMessage3 () {
+      this.radio = '3'
+      localStorage.setItem('shareRadioMessage', this.radio)
+      // this.$emit('radioMessage', this.radio)
     }
   }
 }
@@ -52,6 +68,9 @@ export default {
 <style lang="less" scoped>
     #shareSetting{
         background-color: #f8f8f8;
+        height: 100%;
+        width: 100%;
+        position: absolute;
         .radio{
             padding: 10px;
             .van-cell__title{

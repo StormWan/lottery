@@ -29,8 +29,7 @@ const router = new Router({
         keepAlive: true
       },
       components: {
-        default: () => import('./views/activityDetail'),
-        tabbar: () => import('./components/goodsTabber/index.vue')
+        default: () => import('./views/activityDetail')
       }
     },
     {
@@ -78,14 +77,47 @@ const router = new Router({
       }
     },
     {
-      path: '/shareSetting', // 活动详情页面
+      path: '/sponsor', // 设置赞助商信息
+      name: 'sponsor',
+      meta: {
+        noAuth: false, // 处理需要登录的页面
+        keepAlive: false
+      },
+      components: {
+        default: () => import('./views/postEvent/sponsor/index.vue')
+      }
+    },
+    {
+      path: '/passwordLottery', // 设置口令抽奖页面
+      name: 'passwordLottery',
+      meta: {
+        noAuth: false, // 处理需要登录的页面
+        keepAlive: false
+      },
+      components: {
+        default: () => import('./views/postEvent/passwordLottery/index.vue')
+      }
+    },
+    {
+      path: '/shareSetting', // 设置分享权限
       name: 'shareSetting',
       meta: {
         noAuth: false, // 处理需要登录的页面
         keepAlive: false
       },
       components: {
-        default: () => import('./views/postEvent/shareSetting.vue')
+        default: () => import('./views/postEvent/shareSetting/index.vue')
+      }
+    },
+    {
+      path: '/preview', // 预览页面
+      name: 'preview',
+      meta: {
+        noAuth: false, // 处理需要登录的页面
+        keepAlive: false
+      },
+      components: {
+        default: () => import('./views/postEvent/preview/index.vue')
       }
     },
     {

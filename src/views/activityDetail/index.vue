@@ -102,12 +102,16 @@
                 </van-row>
             </div>
         </div>
+        <van-goods-action>
+            <van-goods-action-mini-btn icon="home-o" text="首页" to="/"/>
+            <van-goods-action-big-btn text="我也要发起抽奖" to="../postEvent"/>
+            <van-goods-action-big-btn primary text="参与更加活动" to="/" />
+        </van-goods-action>
     </div>
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
-import { Row, Col, NavBar, Button, Actionsheet } from 'vant'
+import { Row, Col, NavBar, Button, Actionsheet, GoodsAction, GoodsActionBigBtn, GoodsActionMiniBtn } from 'vant'
 
 export default {
   name: 'activityDetail',
@@ -140,7 +144,10 @@ export default {
     [Row.name]: Row,
     [NavBar.name]: NavBar,
     [Button.name]: Button,
-    [Actionsheet.name]: Actionsheet
+    [Actionsheet.name]: Actionsheet,
+    [GoodsActionBigBtn.name]: GoodsActionBigBtn,
+    [GoodsActionMiniBtn.name]: GoodsActionMiniBtn,
+    [GoodsAction.name]: GoodsAction
   },
   // create () { // <---将信息存进 localStorage，设置初始值
   //   // const boost = { activityId: 0, boostNumber: 0, boostMultiple: 0 }
@@ -149,7 +156,6 @@ export default {
   //   // console.log('boost:' + JSON.parse(localStorage.getItem('boost')))
   // },
   async mounted () {
-    this.setActiveTab(1)
     // await this.getProducts()
     // localStorage.setItem('boostNumber', 0)
     // localStorage.setItem('boostMultiple', 0)
@@ -161,9 +167,6 @@ export default {
     // console.log('create:' + localStorage.getItem('boostNumber'))
   },
   methods: {
-    ...mapMutations({
-      setActiveTab: 'tabbar/setActiveTab'
-    }),
     // Navbar左边的返回按钮
     onClickLeft () {
       this.$router.go(-1)

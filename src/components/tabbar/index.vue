@@ -29,8 +29,8 @@ export default {
         },
         {
           name: '发起活动',
-          path: '/activityDetail',
-          pathName: 'activityDetail',
+          path: '/postEvent',
+          pathName: 'postEvent',
           icon: 'point-gift-o',
           dot: false
           // info: ''

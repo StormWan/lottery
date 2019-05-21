@@ -60,24 +60,24 @@
                 <van-col><p>高级设置</p></van-col>
             </van-row>
             <div id="advancedSettings">
-                <van-row type="flex">
-                    <div @click="toSponsor">
+                <div @click="toSponsor">
+                    <van-row type="flex">
                         <van-col><p>赞助商信息</p></van-col>
                         <van-col><van-icon name="arrow" class="rightArrow"/></van-col>
-                    </div>
-                </van-row>
-                <van-row type="flex">
-                    <div @click="toPasswordLottery">
+                    </van-row>
+                </div>
+                <div @click="toPasswordLottery">
+                    <van-row type="flex">
                         <van-col><p>口令抽奖</p></van-col>
                         <van-col><van-icon name="arrow" class="rightArrow"/></van-col>
-                    </div>
-                </van-row>
-                <van-row type="flex">
-                    <div @click="toShare">
+                    </van-row>
+                </div>
+                <div @click="toShare">
+                    <van-row type="flex">
                         <van-col><p>分享&助力</p></van-col>
                         <van-col><van-icon name="arrow" class="rightArrow"/></van-col>
-                    </div>
-                </van-row>
+                    </van-row>
+                </div>
             </div>
             <van-goods-action >
                 <van-goods-action-big-btn
@@ -141,10 +141,12 @@ export default {
       openAway: '定时开奖',
       chooseTime: true,
       choosePerson: false,
-      personNumber: '1'
+      personNumber: '1',
+      shareSetting: ''
     }
   },
   mounted () {
+    // 打开页面，判断之前是否有填写过信息，有就获取 laocalStorage 的信息
     if (localStorage.getItem('myPreview')) {
       this.goodsNumber = JSON.parse(localStorage.getItem('myPreview')).goodsNumber
       this.sponsor1 = JSON.parse(localStorage.getItem('myPreview')).sponsor1
@@ -152,13 +154,19 @@ export default {
       this.lotterAway = JSON.parse(localStorage.getItem('myPreview')).lotterAway
       this.lotteryTime = JSON.parse(localStorage.getItem('myPreview')).lotteryTime
       this.imgGood = JSON.parse(localStorage.getItem('myPreview')).imgGood
+      this.openAway = JSON.parse(localStorage.getItem('myPreview')).openAway
     }
-    // console.log(this.$refs.sad)
-    // let afterRemove = new Date().getMinutes() + 1
-    // console.log(afterRemove)
-    // setTimeout(localStorage.removeItem('myPreview'), afterRemove)
+    // 再次打开页面，获取之前的开奖方式
+    if (JSON.parse(localStorage.getItem('myPreview')).openAway === '定时开奖') {
+      this.chooseTime = true
+      this.choosePerson = false
+    } else {
+      this.chooseTime = false
+      this.choosePerson = true
+    }
   },
   methods: {
+    // 返回上一个页面
     onClickLeft () {
       this.$router.go(-1)
     },
@@ -172,11 +180,11 @@ export default {
     },
     // 赞助商信息
     toSponsor () {
-      this.$router.push('/')
+      this.$router.push('./sponsor')
     },
     // 口令抽奖
     toPasswordLottery () {
-      this.$router.push('/')
+      this.$router.push('./passwordLottery')
     },
     // 分享助力
     toShare () {
@@ -184,7 +192,9 @@ export default {
     },
     // 选择开奖方式的方法
     onChange (picker, value, index) {
-      document.getElementById('p').innerText = value
+      // document.getElementById('p').innerText = value
+      this.openAway = value
+      console.log(this.openAway)
       if (value === '定时开奖') {
         this.chooseTime = true
         this.choosePerson = false
@@ -199,9 +209,8 @@ export default {
       if (myPreview.goodsTitle !== '') {
         if (myPreview.openAway === '定时开奖' & myPreview.lotteryTime !== '') {
           this.$router.push('/')
-          localStorage.removeItem('myPreview')
-        }
-        else if (myPreview.openAway === '满人开奖' & myPreview) {
+          localStorage.removeItem('myPreview') // <-----清空保存发起活动的信息
+        } else if (myPreview.openAway === '满人开奖' & myPreview) {
 
         }
       }
@@ -220,7 +229,7 @@ export default {
       let preview = JSON.stringify(myPreview) // <--将对象转为字符串，再保存到 localStorage
       localStorage.setItem('myPreview', preview)
       console.log(JSON.parse(localStorage.getItem('myPreview')))
-      this.$router.push('./preview.vue')
+      this.$router.push('./preview')
     }
   }
 }
