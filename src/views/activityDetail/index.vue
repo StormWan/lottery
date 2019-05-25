@@ -7,7 +7,11 @@
                 left-arrow
                 @click-left="onClickLeft"
         />
-        <img :src="imgGood" id="goodsPicture"/>
+        <van-swipe :autoplay="3000" :height="350">
+            <van-swipe-item v-for="(image, index) in imgGood" :key="index" id="goodsPicture">
+                <img v-lazy="image" />
+            </van-swipe-item>
+        </van-swipe>
         <div id="imageButtom">
             <van-row type="flex" justify="space-between">
                 <van-col>
@@ -90,7 +94,7 @@
                 <span @click="toPersonIcon">{{user}}</span>
                 <van-row type="flex" justify="center" id="imagePosition">
                     <div class="img_box">
-                        <div v-for="item in items" :key="item.id ">
+                        <div v-for="item in items" :key="item ">
                             <img :src="imgIcon" class="imagePerson">
                         </div>
                     </div>
@@ -100,6 +104,27 @@
                     <van-col span="7"><p>详情介绍</p></van-col>
                     <van-col span="4"><img src="../../assets/image/right.png" class="imageArrow"></van-col>
                 </van-row>
+                <van-field v-model="fieldValue"></van-field>
+                <!--       商品详情图         -->
+                <div v-for="item in imgSponsor"  :key="item.id" class="sponsorImg">
+                    <img :src="item">
+                </div>
+                <!--       一键复制模板1         -->
+                <div v-show="cardshow" class="copyField">
+                    <div class="contain2">
+                        <p>{{titleValue}}</p>
+                        <p class="p" id="pll">{{copyValue}}</p>
+                        <van-button alt="Copy to clipboard" type="primary" size="large" class="btn" data-clipboard-target="#pll" @click="copyLink">一键复制</van-button>
+                    </div>
+                </div>
+                <!--       一键复制模板2         -->
+                <div v-show="cardshow1" class="copyField">
+                    <div class="contain2">
+                        <p>{{titleValue1}}</p>
+                        <p class="p" id="pl">{{copyValue1}}</p>
+                        <van-button alt="Copy to clipboard" type="primary" size="large" class="btn" data-clipboard-target="#pl" @click="copyLink">一键复制</van-button>
+                    </div>
+                </div>
             </div>
         </div>
         <van-goods-action>
@@ -111,7 +136,8 @@
 </template>
 
 <script>
-import { Row, Col, NavBar, Button, Actionsheet, GoodsAction, GoodsActionBigBtn, GoodsActionMiniBtn } from 'vant'
+import { Row, Col, NavBar, Button, Toast, Actionsheet, GoodsAction, GoodsActionBigBtn, GoodsActionMiniBtn, Swipe, SwipeItem, Field } from 'vant'
+import ClipboardJS from '../../../node_modules/clipboard/dist/clipboard.min'
 
 export default {
   name: 'activityDetail',
@@ -122,12 +148,13 @@ export default {
       lotteryTime: '05 月 12 日 17 ：00',
       user: '参与将关注店铺，已有 8902 人参加此活动 >',
       items: 18,
-      imgGood: require('../../assets/image/logo.png'),
+      imgGood: [require('../../assets/image/presentBox.png'), require('../../assets/image/presentBox.png'), require('../../assets/image/presentBox.png')],
       imgPresent: require('../../assets/image/presentBox.png'),
       imgIcon: require('../../assets/image/person.png'),
       imgWeiChat: require('../../assets/image/weichat.png'),
       imgPicture: require('../../assets/image/picture.png'),
       imgShare: require('../../assets/image/smile.jpg'),
+      imgSponsor: [require('../../assets/image/weichat.png'), require('../../assets/image/person.png'), require('../../assets/image/presentBox.png')],
       lotteryButton: true,
       afterJoin: false,
       showActionsheet: false,
@@ -136,7 +163,14 @@ export default {
       boostMultiple: 0, // <--- 一开始都设置为默认值 0
       boostNumber: 0,
       activityId: 0,
-      showShare: false
+      showShare: false,
+      fieldValue: '详情介绍下的介绍，叭啦啦啦啦啦啦',
+      cardshow: true,
+      cardshow1: true,
+      copyValue: '复制内容一',
+      copyValue1: '复制内容二',
+      titleValue: '复制标题一',
+      titleValue1: '复制标题二'
     }
   },
   components: {
@@ -147,24 +181,26 @@ export default {
     [Actionsheet.name]: Actionsheet,
     [GoodsActionBigBtn.name]: GoodsActionBigBtn,
     [GoodsActionMiniBtn.name]: GoodsActionMiniBtn,
-    [GoodsAction.name]: GoodsAction
+    [GoodsAction.name]: GoodsAction,
+    [SwipeItem.name]: SwipeItem,
+    [Swipe.name]: Swipe,
+    [Field.name]: Field,
+    [Toast.name]: Toast
   },
-  // create () { // <---将信息存进 localStorage，设置初始值
-  //   // const boost = { activityId: 0, boostNumber: 0, boostMultiple: 0 }
-  //   // console.log(boost)
-  //   // localStorage.setItem(JSON.stringify(('boost', boost)))
-  //   // console.log('boost:' + JSON.parse(localStorage.getItem('boost')))
-  // },
-  async mounted () {
-    // await this.getProducts()
-    // localStorage.setItem('boostNumber', 0)
-    // localStorage.setItem('boostMultiple', 0)
-    // localStorage.setItem('activityId', 0) // <---商品ID 对应上就
-    // if (localStorage.getItem('activityId') === this.activityId) {
-    //   this.boostNumber = localStorage.getItem('boostNumber')
-    //   this.boostNumber = localStorage.getItem('boostMultiple')
+  mounted () {
+    // 如果本地存在 boost 键值对，证明已经参加了活动，返回就直接显示助力信息
+    if (localStorage.getItem('boost')) {
+      this.afterShow()
+      this.boostNumber = JSON.parse(localStorage.getItem('boost')).boostNumber
+      this.boostMultiple = JSON.parse(localStorage.getItem('boost')).boostMultiple
+    }
+    // 从服务器获取赞助商的图片信息，现是暂时是获取本地的图片信息
+    // if (localStorage.getItem('sponsorMessagePicture')) {
+    //   let job = JSON.parse(localStorage.getItem('sponsorMessagePicture'))
+    //   for (let i = 0; i < job.length; i++) {
+    //     this.img[i] = job[i]
+    //   }
     // }
-    // console.log('create:' + localStorage.getItem('boostNumber'))
   },
   methods: {
     // Navbar左边的返回按钮
@@ -179,13 +215,6 @@ export default {
     showShareT () {
       this.showShare = true
     },
-    // 参加活动按钮
-    lottery () {
-      // 隐藏参与活动按钮，显示抽奖信息，显示上拉菜单
-      this.lotteryButton = false
-      this.afterJoin = true
-      this.showActionsheet = true
-    },
     // 点击选项时候默认不会关闭菜单，可以手动关闭
     onSelect () {
       this.showActionsheet = false
@@ -194,24 +223,54 @@ export default {
     toEmbedArticle () {
       this.$router.push('./embedArticle')
     },
-    // 发送给好友
-    toWeichat () {
-      // this.$router.push('./merchant'),
-      localStorage.setItem('boostNumber', this.boostNumber + 1)
-      localStorage.setItem('boostMultiple', this.boostMultiple + 1)
-      console.log('toWeichat:' + this.boostNumber)
-      console.log(this.boostMultiple)
+    // 一键复制
+    copyLink () { // <-- 点击即复制
+      var clipboard = new ClipboardJS('.btn')
+      clipboard.on('success', function (e) {
+        Toast('链接复制成功')
+      })
+      clipboard.on('error', function (e) {
+        Toast(e)
+      })
     },
-    // 生成分享图片
-    storePicture () {
-      localStorage.setItem('boostNumber', this.boostNumber + 1)
-      localStorage.setItem('boostMultiple', this.boostMultiple + 1)
+    // 参加活动按钮,隐藏参与活动按钮，显示抽奖信息，显示上拉菜单
+    lottery () {
+      this.lotteryButton = false
+      this.afterJoin = true
+      this.showActionsheet = true
+    },
+    // 隐藏参与活动按钮，显示抽奖信息
+    afterShow () {
+      this.lotteryButton = false
+      this.afterJoin = true
+    },
+    // 发送给好友，没有任何助力
+    toWeichat () {
+      let boost = {}
+      boost.boostNumber = this.boostNumber
+      boost.boostMultiple = this.boostMultiple
+      localStorage.setItem('boost', JSON.stringify(boost))
+      // this.afterShow()
       this.$router.push('./merchant')
     },
-    // 点击商家链接
+    // 生成分享图片，没有任何助力
+    storePicture () {
+      let boost = {}
+      boost.boostNumber = this.boostNumber
+      boost.boostMultiple = this.boostMultiple
+      localStorage.setItem('boost', JSON.stringify(boost))
+      this.$router.push('./merchant')
+      // this.afterShow()
+    },
+    // 点击商家链接,将助力信息存储在本地
     toMerchant () {
-      localStorage.setItem('boostNumber', this.boostNumber + 1)
-      localStorage.setItem('boostMultiple', this.boostMultiple + 2)
+      let boost = {}
+      this.boostNumber = this.boostNumber + 1
+      this.boostMultiple = this.boostMultiple + 2
+      boost.boostNumber = this.boostNumber
+      boost.boostMultiple = this.boostMultiple
+      localStorage.setItem('boost', JSON.stringify(boost))
+      this.$router.push('./merchant')
     }
   }
 }
@@ -222,6 +281,15 @@ export default {
         position: absolute;
         width: 100%;
         padding-bottom: 53px;
+        /*轮播图*/
+        .van-swipe{
+            .van-swipe-item{
+                img{
+                    height: 100%;
+                    width: 100%;
+                }
+            }
+        }
         /*商品图片展示*/
         #goodsPicture{
             width: 100%;
@@ -238,16 +306,12 @@ export default {
                 margin-top: 5px;
                 vertical-align: middle;
             }
-            .span{
-                vertical-align: middle;
-            }
+            .span{ vertical-align: middle; }
         }
         /*商品详细信息*/
         #goodsMessage{
             padding: 10px;
-            p{
-                margin: 0px;
-            }
+            p{ margin: 0px; }
             span{
                 color: darkgray;
                 font-family: "微软雅黑 Light";
@@ -282,6 +346,7 @@ export default {
                 font-size: 22px;
                 padding-left: 2px;
             }
+            /*参加活动后显示的助力信息*/
             .Boost{
                 p{
                     font-size: small;
@@ -293,10 +358,8 @@ export default {
                     padding-top: 5px;
                 }
             }
-            .p{
-                color: darkgray;
-                font-size: small;
-            }
+            /*分享*/
+            .p{ color: darkgray;font-size: small; }
             /*参与活动按钮*/
             .van-button--large{
                 span{
@@ -316,6 +379,7 @@ export default {
                 width: 50px;
                 height: 50px
             }
+            /*限时好友助力*/
             #actionsheet{
                 h4{
                     display: flex;
@@ -355,6 +419,7 @@ export default {
                     }
                 }
             }
+            /*头像信息*/
             #personMessage{
                 text-align: center;
                 #imagePosition{
@@ -384,6 +449,35 @@ export default {
                     padding-top: 5px;
                     width: 80px;
                     height: 30px;
+                }
+                /*一键复制的样式*/
+                .copyField{
+                    background-color: #f8f8f8;
+                    height: 100%;
+                    width: 100%;
+                    .contain2{
+                        height: 100%;
+                        margin: 10px;
+                        padding-top: 10px;
+                        p{
+                            background-color: white;
+                            margin-bottom: 10px;
+                            padding: 10px;
+                            color: blue;
+                        }
+                        .p{
+                            background-color: white;
+                            margin-bottom: 10px;
+                            padding: 10px;
+                            color: black;
+                        }
+                    }
+                }
+                /*商家图片的样式*/
+                .sponsorImg {
+                    img {
+                        width: 100%;
+                    }
                 }
             }
         }

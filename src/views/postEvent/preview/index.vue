@@ -6,7 +6,11 @@
                 left-arrow
                 @click-left="onClickLeft"
         />
-        <img :src="imgGood" id="goodsPicture"/>
+        <van-swipe :autoplay="3000" :height="300">
+            <van-swipe-item v-for="(image, index) in images" :key="index">
+                <img v-lazy="image" />
+            </van-swipe-item>
+        </van-swipe>
         <div id="imageButtom">
             <van-row type="flex" justify="space-between">
                 <van-col>
@@ -34,20 +38,39 @@
                     <p class="p">分享</p>
                 </van-col>
             </van-row>
-            <!--     头像信息       -->
+            <!--     详情信息       -->
             <div id="personMessage">
                 <van-row type="flex" justify="center">
                     <van-col span="4"><img src="../../../assets/image/left.png" class="imageArrow"></van-col>
                     <van-col span="7"><p>详情介绍</p></van-col>
                     <van-col span="4"><img src="../../../assets/image/right.png" class="imageArrow"></van-col>
                 </van-row>
+                <van-field v-model="fieldValue"></van-field>
+                <div v-for="item in img"  :key="item.id" class="sponsorImg">
+                    <img :src="item">
+                </div>
+                <div v-show="cardshow" class="copyField">
+                    <div class="contain2">
+                        <p>{{titleValue}}</p>
+                        <p class="p" id="pll">{{copyValue}}</p>
+                        <van-button alt="Copy to clipboard" type="primary" size="large" class="btn" data-clipboard-target="#pll" @click="copyLink">一键复制</van-button>
+                    </div>
+                </div>
+                <div v-show="cardshow1" class="copyField">
+                    <div class="contain2">
+                        <p>{{titleValue1}}</p>
+                        <p class="p" id="pl">{{copyValue1}}</p>
+                        <van-button alt="Copy to clipboard" type="primary" size="large" class="btn" data-clipboard-target="#pl" @click="copyLink">一键复制</van-button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import { Row, Col, NavBar, Button, Actionsheet } from 'vant'
+import { Row, Col, NavBar, Button, Actionsheet, Field, Toast, Swipe, SwipeItem } from 'vant'
+import ClipboardJS from '../../../../node_modules/clipboard/dist/clipboard.min'
 
 export default {
   name: 'preview',
@@ -62,26 +85,16 @@ export default {
       lotterAway: '',
       openAway: '',
       chooseTime: true,
-      choosePerson: false
-    }
-  },
-  mounted () {
-    if (localStorage.getItem('myPreview')) {
-      this.goodsNumber = JSON.parse(localStorage.getItem('myPreview')).goodsNumber
-      this.sponsor1 = JSON.parse(localStorage.getItem('myPreview')).sponsor1
-      this.goodsTitle = JSON.parse(localStorage.getItem('myPreview')).goodsTitle
-      this.lotterAway = JSON.parse(localStorage.getItem('myPreview')).lotterAway
-      this.lotteryTime = JSON.parse(localStorage.getItem('myPreview')).lotteryTime
-      this.personNumber = JSON.parse(localStorage.getItem('myPreview')).personNumber
-      this.imgGood = JSON.parse(localStorage.getItem('myPreview')).imgGood
-      this.openAway = JSON.parse(localStorage.getItem('myPreview')).openAway
-    }
-    if (JSON.parse(localStorage.getItem('myPreview')).openAway === '定时开奖') {
-      this.chooseTime = true
-      this.choosePerson = false
-    } else {
-      this.chooseTime = false
-      this.choosePerson = true
+      choosePerson: false,
+      images: [],
+      img: [],
+      cardshow: true,
+      cardshow1: true,
+      fieldValue: '',
+      copyValue: '',
+      copyValue1: '',
+      titleValue: '',
+      titleValue1: ''
     }
   },
   components: {
@@ -89,11 +102,73 @@ export default {
     [Row.name]: Row,
     [NavBar.name]: NavBar,
     [Button.name]: Button,
-    [Actionsheet.name]: Actionsheet
+    [Actionsheet.name]: Actionsheet,
+    [Field.name]: Field,
+    [Toast.name]: Toast,
+    [Swipe.name]: Swipe,
+    [SwipeItem.name]: SwipeItem
+  },
+  mounted () {
+    // 判断是否存储了数据
+    if (localStorage.getItem('myPreview')) {
+      this.goodsNumber = JSON.parse(localStorage.getItem('myPreview')).goodsNumber
+      this.sponsor1 = JSON.parse(localStorage.getItem('myPreview')).sponsor1
+      this.goodsTitle = JSON.parse(localStorage.getItem('myPreview')).goodsTitle
+      this.lotterAway = JSON.parse(localStorage.getItem('myPreview')).lotterAway
+      this.lotteryTime = JSON.parse(localStorage.getItem('myPreview')).lotteryTime
+      this.personNumber = JSON.parse(localStorage.getItem('myPreview')).personNumber
+      this.openAway = JSON.parse(localStorage.getItem('myPreview')).openAway
+
+      if (JSON.parse(localStorage.getItem('myPreview')).openAway === '定时开奖') {
+        this.chooseTime = true
+        this.choosePerson = false
+      } else {
+        this.chooseTime = false
+        this.choosePerson = true
+      }
+    }
+    // 判断是否存储了商品的图片，有就获取
+    if (localStorage.getItem('goodsPicture')) {
+      let job = JSON.parse(localStorage.getItem('goodsPicture'))
+      for (let i = 0; i < job.length; i++) {
+        this.images[i] = job[i]
+      }
+    }
+    // 判断是否存储了赞助商信息，有即获取
+    if (JSON.parse(localStorage.getItem('sponsorMessage'))) {
+      this.fieldValue = JSON.parse(localStorage.getItem('sponsorMessage')).fieldValue
+      this.copyValue = JSON.parse(localStorage.getItem('sponsorMessage')).copyValue
+      this.titleValue = JSON.parse(localStorage.getItem('sponsorMessage')).titleValue
+      this.copyValue1 = JSON.parse(localStorage.getItem('sponsorMessage')).copyValue1
+      this.titleValue1 = JSON.parse(localStorage.getItem('sponsorMessage')).titleValue1
+
+      if (this.titleValue === '' & this.copyValue === '') {
+        this.cardshow = false
+      }
+      if (this.titleValue1 === '' & this.copyValue1 === '') {
+        this.cardshow1 = false
+      }
+    }
+    // 判断是否有存储赞助商的图片，有获取存储详细信息的图片信息
+    if (localStorage.getItem('sponsorMessagePicture')) {
+      let job = JSON.parse(localStorage.getItem('sponsorMessagePicture'))
+      for (let i = 0; i < job.length; i++) {
+        this.img[i] = job[i]
+      }
+    }
   },
   methods: {
     onClickLeft () {
       this.$router.go(-1)
+    },
+    copyLink () { // <-- 点击即复制
+      var clipboard = new ClipboardJS('.btn')
+      clipboard.on('success', function (e) {
+        Toast('链接复制成功')
+      })
+      clipboard.on('error', function (e) {
+        Toast(e)
+      })
     }
   }
 }
@@ -104,6 +179,15 @@ export default {
         position: absolute;
         width: 100%;
         padding-bottom: 53px;
+        /*轮播图*/
+        .van-swipe{
+            .van-swipe-item{
+                img{
+                    height: 100%;
+                    width: 100%;
+                }
+            }
+        }
         /*商品图片展示*/
         #goodsPicture{
             width: 100%;
@@ -127,9 +211,7 @@ export default {
         /*商品详细信息*/
         #goodsMessage{
             padding: 10px;
-            p{
-                margin: 0px;
-            }
+            p{ margin: 0px; }
             span{
                 color: darkgray;
                 font-family: "微软雅黑 Light";
@@ -175,10 +257,7 @@ export default {
                     padding-top: 5px;
                 }
             }
-            .p{
-                color: darkgray;
-                font-size: small;
-            }
+            .p{ color: darkgray; font-size: small; }
             /*参与活动按钮*/
             .van-button--large{
                 span{
@@ -237,6 +316,7 @@ export default {
                     }
                 }
             }
+            /*详情信息*/
             #personMessage{
                 text-align: center;
                 #imagePosition{
@@ -262,10 +342,40 @@ export default {
                     padding-left: 20px;
                     color: darkgray;
                 }
+                /*详情介绍的分割线*/
                 .imageArrow{
                     padding-top: 5px;
                     width: 80px;
                     height: 30px;
+                }
+                /*一键复制的样式*/
+                .copyField{
+                    background-color: #f8f8f8;
+                    height: 100%;
+                    width: 100%;
+                    .contain2{
+                        height: 100%;
+                        margin: 10px;
+                        padding-top: 10px;
+                        p{
+                            background-color: white;
+                            margin-bottom: 10px;
+                            padding: 10px;
+                            color: blue;
+                        }
+                        .p{
+                            background-color: white;
+                            margin-bottom: 10px;
+                            padding: 10px;
+                            color: black;
+                        }
+                    }
+                }
+                /*商家图片的样式*/
+                .sponsorImg {
+                    img {
+                        width: 100%;
+                    }
                 }
             }
         }

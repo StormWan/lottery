@@ -33,16 +33,20 @@
 </template>
 
 <script>
-import { Row, Col, DatetimePicker, Cell, CellGroup, Actionsheet } from 'vant'
+import { Row, Col, DatetimePicker, Cell, CellGroup, Actionsheet, Toast } from 'vant'
 
 export default {
   name: 'field-date-card',
-  inheritAttrs: false, // https://cn.vuejs.org/v2/api/#inheritAttrs
+  inheritAttrs: false,
   props: {
     value: {
       type: [Number, Date],
       default: undefined // 值不能是 null，DatePicker会报错
     },
+    // ifShow: {
+    //   type: String,
+    //   default: ''
+    // },
     // Cell 显示的文字
     label: {
       type: String,
@@ -82,7 +86,8 @@ export default {
       selectedItem: null,
       isShowPicker: false,
       text: '',
-      currentDate: new Date()
+      currentDate: new Date(),
+      ifShow: ''
     }
   },
   components: {
@@ -91,7 +96,8 @@ export default {
     [CellGroup.name]: CellGroup,
     [Actionsheet.name]: Actionsheet,
     [Row.name]: Row,
-    [Col.name]: Col
+    [Col.name]: Col,
+    [Toast.name]: Toast
   },
   computed: {
     // 展示的格式化，时间提交的值是Date类型数据
@@ -110,7 +116,22 @@ export default {
       return ''
     }
   },
+  // mounted () {
+  //   if (this.ifShow !== '' & this.ifShow !== undefined) {
+  //     console.log(this.ifShow)
+  //     this.$emit('input', this.ifShow)
+  //     this.$emit('change', this.ifShow)
+  //     document.getElementById('cellP').innerText = this.ifShow ? this.dateFormat(this.ifShow, this.formatFormula) : ''
+  //     console.log(this.dateFormat(this.ifShow, this.formatFormula))
+  //     this.$emit('lotteryTime', this.dateFormat(this.ifShow, this.formatFormula))
+  //     this.cancel()
+  //   } else {
+  //     // console.log(this.ifShow)
+  //     Toast('this.ifShow is null')
+  //   }
+  // },
   methods: {
+    // 转换时间的格式
     dateFormat: (value, format) => {
       if (!value) return
       if (!(value instanceof Date)) {
@@ -146,6 +167,21 @@ export default {
         this.isShowPicker = true
       }
     },
+    // 获取父组件传给子组件的动态数据
+    getShow (m) {
+      if (m !== '' & m !== undefined) {
+        this.ifShow = m
+        // console.log(this.ifShow)
+        this.$emit('input', this.ifShow)
+        this.$emit('change', this.ifShow)
+        document.getElementById('cellP').innerText = this.ifShow ? this.dateFormat(this.ifShow, this.formatFormula) : ''
+        // console.log(this.dateFormat(this.ifShow, this.formatFormula))
+        this.$emit('lotteryTime', this.dateFormat(this.ifShow, this.formatFormula))
+        this.cancel()
+      } else {
+        Toast('this.ifShow is null')
+      }
+    },
     confirm (value) {
       // 更新 v-model 绑定的 value 值，第二个参数是毫秒数，第三个参数是原始值，根据自己的项目的数据结构来修改
       // input 事件同时也会触发 vee-validate 的验证事件
@@ -153,7 +189,8 @@ export default {
       // onChange事件，虽然重写 @input可以实现，但这样会破坏 v-model 写法。
       this.$emit('change', value)
       document.getElementById('cellP').innerText = value ? this.dateFormat(value, this.formatFormula) : ''
-      console.log(value)
+      // console.log(this.dateFormat(value, this.formatFormula))
+      this.$emit('lotteryTime', this.dateFormat(value, this.formatFormula))
       this.cancel()
     },
     // 隐藏弹框

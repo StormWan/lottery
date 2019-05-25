@@ -13,28 +13,46 @@
             </van-row>
             <div id="basicSettings">
                 <van-row type="flex">
-                    <van-col ><img :src="imgGood" class="productImg"/></van-col>
-                    <van-col >
-                        <van-field v-model="goodsTitle" type="textarea" placeholder="请输入奖品名称" size="large" id="goodsTitle" ref="sad" autosize/>
-                        <van-stepper v-model="goodsNumber" integer :min="1" :max="100" :step="1" @overlimit="overlimit"/>
-                    </van-col>
+                    <van-col><p>商品名称：</p></van-col>
+                    <van-col><van-field v-model="goodsTitle" type="textarea" placeholder="请输入奖品名称" size="large" id="goodsTitle" ref="sad" autosize/></van-col>
                 </van-row>
+                <van-row type="flex">
+                    <van-col><p>商品数量：</p></van-col>
+                    <van-col><van-stepper v-model="goodsNumber" integer :min="1" :max="100" :step="1" @overlimit="overlimit" id="stepper"/></van-col>
+                </van-row>
+                <div class="uploader">
+                    <van-uploader :after-read="onRead" name="截图" :max-size="maxSize" @oversize="oversize" accept="image/jpg, image/jpeg, image/png">
+                        <van-row type="flex">
+                            <div v-for="(item, index) in img " :key=index>
+                                <img :src="item"  ref="goodsImg" class="productImg" >
+                                <div v-show="iconClear">
+                                    <van-icon name="clear" @click.native.stop="imgclose(index)" id="clearIcon"></van-icon>
+                                </div>
+                                <div v-show="iconClear1">
+                                    <van-icon name="clear" @click.native.stop="imgclose(index)" id="clearIcon1"></van-icon>
+                                </div>
+                                <div v-show="iconClear2">
+                                    <van-icon name="clear" @click.native.stop="imgclose(index)" id="clearIcon2"></van-icon>
+                                </div>
+                            </div>
+                            <img :src="imgGood" name="photograph" class="productImg">
+                        </van-row>
+                    </van-uploader>
+                </div>
                 <div @click="show = true">
                     <van-row type="flex" justify="space-between" >
                         <van-col><p>开奖方式</p></van-col>
-                        <van-col>
-                            <div class="rightSetting">
-                                <span id ="p">{{openAway}}</span>
-                                <van-icon name="arrow"/>
-                            </div>
-                        </van-col>
+                        <van-col><div class="rightSetting">
+                            <span id ="p">{{openAway}}</span>
+                            <van-icon name="arrow"/>
+                        </div></van-col>
                     </van-row>
                 </div>
                 <van-popup v-model="show" position="bottom" :overlay="false">
                     <van-picker show-toolbar :columns="columns" @confirm="show = false" @cancel="show = false" @change="onChange"/>
                 </van-popup>
                 <div  @click="show1 = true" v-show="chooseTime">
-                    <field-date-card label="开奖时间" v-model="time" type="datetime" :max-date="maxDate" :min-date="minDate"/>
+                    <field-date-card ref="msg" v-on:lotteryTime="lotteryTimeByValue" label="开奖时间" type="datetime" :max-date="maxDate" :min-date="minDate"/>
                 </div>
                 <div v-show="choosePerson" >
                     <van-row type="flex" >
@@ -95,7 +113,7 @@
 </template>
 
 <script>
-import { Row, Col, NavBar, Field, Icon, Popup, Picker, Stepper, Toast, DatetimePicker, Tabbar, TabbarItem, GoodsAction, GoodsActionBigBtn, GoodsActionMiniBtn, NumberKeyboard } from 'vant'
+import { Row, Col, NavBar, Field, Uploader, Icon, Popup, Picker, Stepper, Toast, DatetimePicker, Tabbar, TabbarItem, GoodsAction, GoodsActionBigBtn, GoodsActionMiniBtn, NumberKeyboard } from 'vant'
 import postPreview from './preview'
 import fieldDateCard from './fieldDate-card'
 
@@ -119,30 +137,39 @@ export default {
     [GoodsActionBigBtn.name]: GoodsActionBigBtn,
     [postPreview.name]: postPreview,
     [NumberKeyboard.name]: NumberKeyboard,
-    [fieldDateCard.name]: fieldDateCard
+    [fieldDateCard.name]: fieldDateCard,
+    [Uploader.name]: Uploader
   },
   data () {
     return {
-      imgGood: require('../../assets/image/weichat.png'),
+      imgGood: require('../../assets/image/photograph.png'),
       goodsTitle: '',
       lotterAway: '',
       goodsNumber: '',
+      imgFile: '',
+      imgFile1: '',
+      imgFile2: '',
+      img: [], // 用于显示图片
+      maxSize: 1024 * 1024 * 2,
       show: false,
       show1: false,
       show2: false,
       showKayboard: false,
       columns: ['定时开奖', '满人开奖'],
-      time: undefined,
       timePlaceholder: '请选择开奖时间',
       lotteryTime: '',
+      time: '',
       minDate: new Date(),
       maxDate: new Date(2019, 12, 30),
-      sponsor1: '贝贝无敌有限公司赞助 ',
+      sponsor1: '贝贝无敌有限公司赞助 ', // 可以就获取微信本人的昵称
       openAway: '定时开奖',
       chooseTime: true,
       choosePerson: false,
       personNumber: '1',
-      shareSetting: ''
+      shareSetting: '',
+      iconClear: false,
+      iconClear1: false,
+      iconClear2: false
     }
   },
   mounted () {
@@ -153,16 +180,25 @@ export default {
       this.goodsTitle = JSON.parse(localStorage.getItem('myPreview')).goodsTitle
       this.lotterAway = JSON.parse(localStorage.getItem('myPreview')).lotterAway
       this.lotteryTime = JSON.parse(localStorage.getItem('myPreview')).lotteryTime
-      this.imgGood = JSON.parse(localStorage.getItem('myPreview')).imgGood
+      this.imgFile = JSON.parse(localStorage.getItem('myPreview')).imgFile
+      this.imgFile1 = JSON.parse(localStorage.getItem('myPreview')).imgFile1
+      this.imgFile2 = JSON.parse(localStorage.getItem('myPreview')).imgFile2
       this.openAway = JSON.parse(localStorage.getItem('myPreview')).openAway
+
+      // 再次打开页面，获取之前的开奖方式
+      if (JSON.parse(localStorage.getItem('myPreview')).openAway === '定时开奖') {
+        this.chooseTime = true
+        this.choosePerson = false
+      } else {
+        this.chooseTime = false
+        this.choosePerson = true
+      }
+      // 动态传值给子组件 fieldDate
+      this.$refs.msg.getShow(this.lotteryTime)
     }
-    // 再次打开页面，获取之前的开奖方式
-    if (JSON.parse(localStorage.getItem('myPreview')).openAway === '定时开奖') {
-      this.chooseTime = true
-      this.choosePerson = false
-    } else {
-      this.chooseTime = false
-      this.choosePerson = true
+    if (localStorage.getItem('goodsPicture')) {
+      this.img = JSON.parse(localStorage.getItem('goodsPicture'))
+      this.clearIcon()
     }
   },
   methods: {
@@ -177,6 +213,52 @@ export default {
     // 参与人数数量限制
     overlimit1 () {
       Toast('参与人数最少为 1 个，最多为 500 个')
+    },
+    // 判断有几张预览图，显示删除 icon
+    clearIcon () {
+      if (this.img.length === 1) {
+        this.iconClear = true
+      } else if (this.img.length === 2) {
+        this.iconClear = true
+        this.iconClear1 = true
+      } else {
+        this.iconClear2 = true
+        this.iconClear = true
+        this.iconClear1 = true
+      }
+    },
+    // uploader
+    onRead (file) {
+      if (this.img.length > 2) { // <------限定只能上传三张截图
+        Toast('只能上传三张图喲！')
+      } else { // 后面将每个图片存进一个数组，然后将数组上传到服务器上。
+        this.img.push(file.content)
+        this.clearIcon()
+        // this.imgFile = file.file
+      }
+    },
+    oversize (file) {
+      Toast('上传的文件不能超过2M!')
+    },
+    // 点击删除的按钮
+    imgclose (e) {
+      // console.log(e)
+      this.img.splice(e, 1)
+
+      if (e === 2 || e === '2') {
+        this.iconClear2 = false
+        this.imgFile2 = ''
+      } else if (e === 1 || e === '1') {
+        this.iconClear1 = false
+        this.imgFile1 = ''
+      } else {
+        this.iconClear = false
+        this.imgFile = ''
+      }
+    },
+    // 从子组件获取时间
+    lotteryTimeByValue (lotteryTime) {
+      this.lotteryTime = lotteryTime
     },
     // 赞助商信息
     toSponsor () {
@@ -194,7 +276,7 @@ export default {
     onChange (picker, value, index) {
       // document.getElementById('p').innerText = value
       this.openAway = value
-      console.log(this.openAway)
+      // console.log(this.openAway)
       if (value === '定时开奖') {
         this.chooseTime = true
         this.choosePerson = false
@@ -203,7 +285,7 @@ export default {
         this.choosePerson = true
       }
     },
-    // 提交数据
+    // 提交数据,将数据提交到服务器
     onClickCommit () {
       let myPreview = JSON.parse(localStorage.getItem('myPreview'))
       if (myPreview.goodsTitle !== '') {
@@ -225,10 +307,13 @@ export default {
       myPreview.openAway = this.openAway // 开奖方式
       myPreview.lotteryTime = this.lotteryTime
       myPreview.personNumber = this.personNumber
-      myPreview.imgGood = this.imgGood // 奖品的图片
+      myPreview.imgFile = this.imgFile // 奖品的图片
+      myPreview.imgFile1 = this.imgFile1
+      myPreview.imgFile2 = this.imgFile2
+
       let preview = JSON.stringify(myPreview) // <--将对象转为字符串，再保存到 localStorage
       localStorage.setItem('myPreview', preview)
-      console.log(JSON.parse(localStorage.getItem('myPreview')))
+      localStorage.setItem('goodsPicture', JSON.stringify(this.img))
       this.$router.push('./preview')
     }
   }
@@ -240,7 +325,7 @@ export default {
     #postEvent{
         background-color: #eeeeee;
         position: absolute;
-        padding-bottom: 230px;
+        padding-bottom: 310px;
         /*margin-bottom: 10px;*/
         width: 100%;
         height: 100%;
@@ -272,16 +357,41 @@ export default {
                 background-color: white;
                 padding: 10px;
                 margin-bottom: 10px;
-                span{ padding-right: 5px;}
+                /*开奖方式的样式*/
+                /*#p{ margin-top: 5px;margin-bottom: 0px; }*/
+                /*商品数量的 stepper*/
+                #stepper{ padding-top: 5px;}
                 .van-icon{
                     font-size: 19px;
                     position: relative;
                     vertical-align: middle;
                 }
-                .productImg{
-                    width: 100px;
-                    height: 100px;
-                    padding-right: 5px;
+                /*uploader 的输入框大小*/
+                .uploader {
+                    background-color: white; /*设置输入框浅灰色*/
+                    border-radius: 5px;
+                    /*删除图片的右上角 icon 总设置*/
+                    .van-icon {
+                        /*点击删除的图片样式*/
+                        position: absolute;
+                        color: red;
+                        font-size: 25px;
+                        margin-top: 0px;
+                        z-index:999;
+                        top: 45px;
+                    }
+                    /*删除图片的右上角 icon*/
+                    #clearIcon{left: 40px;}
+                    #clearIcon1{left: 110px;}
+                    #clearIcon2{left: 180px;}
+                    /*显示商品图片的大小*/
+                    .productImg{
+                        width: 60px;
+                        height: 60px;
+                        /*padding-right: 5px;*/
+                        margin-right: 5px;
+                        border: 1px solid #ff9644;
+                    }
                 }
                 .van-field{
                     height: 65px;

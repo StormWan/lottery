@@ -111,7 +111,7 @@ export default {
     filedShow () {
       if (this.fieldNumber < 1) {
         this.fieldNumber++
-        console.log(this.fieldNumber)
+        // console.log(this.fieldNumber)
         this.field = true
       } else {
         Toast('只可插入一个文本哦~')
@@ -122,14 +122,15 @@ export default {
       if (this.img.length >= 9) { // <------限定只能上传九张截图
         Toast('只能上传9张图哦！')
       } else {
-        const FileToAdd = {
-          lastModified: file.file.lastModified,
-          lastModifiedDate: file.file.lastModifiedDate,
-          name: file.file.name,
-          size: file.file.size,
-          type: file.file.type
-        }
-        this.file.push(FileToAdd)
+        this.pictureNumber = this.pictureNumber + 1
+        // const FileToAdd = {
+        //   lastModified: file.file.lastModified,
+        //   lastModifiedDate: file.file.lastModifiedDate,
+        //   name: file.file.name,
+        //   size: file.file.size,
+        //   type: file.file.type
+        // }
+        this.file.push(file.file) // 到时候传给服务器
         this.img.push(file.content)
       }
     },
@@ -139,14 +140,14 @@ export default {
     },
     // 点击删除预览图的按钮
     imgclose (e) {
-      console.log(e)
+      // console.log(e)
       this.img.splice(e, 1)
     },
     // 插入一键复制模板
     copyShow () {
       if (this.copyNumber < 2) {
         this.copyNumber = this.copyNumber + 1
-        console.log(this.copyNumber)
+        // console.log(this.copyNumber)
         this.cardNumber1 = 1
         if (this.cardNumber1 === 1 & this.copyNumber === 1) { this.copyCard = true }
         if (this.copyNumber === 2) {
@@ -192,17 +193,10 @@ export default {
       // 只要有一个非空就可以继续执行
       if (this.fieldValue === '' & this.titleValue === '' & this.titleValue1 === '' & this.copyValue === '' & this.copyValue1 === '' & JSON.stringify(this.file) === '[]') {
         Toast('不能为空哦~')
-      } else {
-        // console.log(sponsorMessage)
-        // console.log(JSON.stringify(sponsorMessage))
-        console.log(this.file)
-        console.log(JSON.stringify(this.file))
+      } else { // <--- 暂时存储在本地，后买你存储到服务器
         localStorage.setItem('sponsorMessage', JSON.stringify(sponsorMessage))
-        localStorage.setItem('sponsorMessagePicture', JSON.stringify(this.file))
-        // console.log(JSON.parse(localStorage.getItem('sponsorMessage')))
-        // console.log(this.file)
-        // console.log(JSON.stringify(this.file))
-        // console.log(JSON.parse(localStorage.getItem('sponsorMessagePicture')))
+        localStorage.setItem('sponsorMessagePicture', JSON.stringify(this.img))
+        Toast('提交赞助商信息成功')
       }
     }
   }
@@ -268,9 +262,10 @@ export default {
                     }
 
                 }
-                /*插入土拍那的样式*/
+                /*插入图片那的样式*/
                 .uploader{
                     .Photograph{
+                        padding-top: 10px;
                         width: 100%;
                         height: 100%;
                     }

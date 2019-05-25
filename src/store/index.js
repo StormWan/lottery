@@ -2,17 +2,19 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import { LOGIN, LOGOUT, TITLE } from './types'
 import tabbar from './modules/tabbar'
-
+import picture from './modules/picture'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    tabbar
+    tabbar,
+    picture
   },
   state: {
     user: {},
     token: null,
-    title: ''
+    title: '',
+    add: ''
   },
   mutations: {
     [LOGIN]: (state, data) => {
