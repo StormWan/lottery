@@ -5,6 +5,7 @@
                 lef-text="返回"
                 left-arrow
                 @click-left="onClickLeft"
+                id="head"
         />
         <div id ="personSetting">
             <!--   个人名片 -->
@@ -14,16 +15,16 @@
                 </van-col>
                 <van-col span="15">
                     <h3>{{personName}}</h3>
-                    <span>{{personId}}</span>
+                    <span>我的金币豆:{{personId}}</span>
                 </van-col>
                 <van-col>
-                    <router-link :to="{path:'../setting'}" >
-                        <van-icon name="setting-o" size="25px"/>
+                    <router-link :to="{path:'../setting'}">
+                        <van-icon name="setting-o" size="25px" style="z-index: 999"/>
                     </router-link>
                 </van-col>
             </van-row>
         </div>
-        <!--    任务中心 + 我的反馈-->
+        <!--    参与活动 + 中奖记录 + 发起活动-->
         <div id="flowCard">
             <van-row type="flex" justify="center" class="card">
                 <van-col>
@@ -50,41 +51,32 @@
         <div id="bottom">
             <van-row type="flex" justify="space-between" class="bottomCard">
                 <van-col>
-                    <van-icon name="friends-o"/>
+                    <van-icon name="friends-o" size="20px" class="bottomIcon"/>
                     <span>{{myAssets}}</span>
                 </van-col>
-                <van-col id="routerArrow">
-                    <router-link :to="{path:'../task'}">
-                        <span>{{activate}}</span>
-                        <van-icon name="arrow"/>
-                    </router-link>
-                </van-col>
+                <van-col id="routerArrow"><router-link :to="{path:'../task'}">
+                    <van-icon name="arrow"/>
+                </router-link></van-col>
             </van-row>
             <!--    常见问题    -->
             <van-row type="flex" justify="space-between" class="bottomCard">
                 <van-col>
-                    <van-icon name="friends-o"/>
-                    <span>{{myAssets}}</span>
+                    <van-icon name="question-o"  size="20px" class="bottomIcon"/>
+                    <span>{{myQuestion}}</span>
                 </van-col>
-                <van-col id="routerArrow">
-                    <router-link :to="{path:'../task'}">
-                        <span>{{activate}}</span>
-                        <van-icon name="arrow"/>
-                    </router-link>
-                </van-col>
+                <van-col id="routerArrow"><router-link :to="{path:'../task'}">
+                    <van-icon name="arrow"/>
+                </router-link></van-col>
             </van-row>
             <!--    精选小程序    -->
             <van-row type="flex" justify="space-between" class="bottomCard">
                 <van-col>
-                    <van-icon name="friends-o"/>
-                    <span>{{myAssets}}</span>
+                    <van-icon name="star-o"  size="20px" class="bottomIcon"/>
+                    <span>{{myProgram}}</span>
                 </van-col>
-                <van-col id="routerArrow">
-                    <router-link :to="{path:'../task'}">
-                        <span>{{activate}}</span>
-                        <van-icon name="arrow"/>
-                    </router-link>
-                </van-col>
+                <van-col id="routerArrow"><router-link :to="{path:'../task'}">
+                    <van-icon name="arrow"/>
+                </router-link> </van-col>
             </van-row>
         </div>
     </div>
@@ -108,8 +100,10 @@ export default {
     return {
       customer: false,
       personName: '老王上田',
-      personId: '会员 ID ：1233435',
-      myAssets: '我的资产',
+      personId: '1233435',
+      myAssets: '公众号合作',
+      myQuestion: '常见问题&联系我们',
+      myProgram: '精选小程序',
       activate: '去参加活动赢得好礼',
       taskCenter: '参与活动',
       award: '中奖记录',
@@ -129,6 +123,9 @@ export default {
     }),
     onClickLeft () {
       this.$router.go(-1)
+    },
+    toSetting () {
+      this.$router.push('./setting')
     }
   }
 }
@@ -136,15 +133,16 @@ export default {
 
 <style lang="less" scoped>
     #about{
-        /*position: absolute;*/
-        /*width: 100%;*/
+        #head{position: fixed; width: 100%;}
         /*个人中心*/
         #personSetting {
+            padding-top: 50px;
             background-color: #ececec;
             padding-bottom: 40px;
-            .iconStyle{
-                font-size: 20px;
-                color: black;
+            /*设置的 icon*/
+            .van-icon{
+                position: absolute;
+                padding-right: 10px;
             }
             #personPicture {
                 width: 50px;
@@ -156,6 +154,7 @@ export default {
                 margin: 0px;
                 padding-top: 10px;
             }
+            span{ font-size: 13px; }
             /*设置的icon*/
             .van-icon{
                 right: 0px;
@@ -170,23 +169,27 @@ export default {
             .card{
                 position: relative;
                 top:120px;
-                background-color: #ffd4db;
+                background-color: white;
                 margin-left: 20px;
                 margin-right: 20px;
                 padding: 5px;
                 border-radius: 10px;
                 display: flex;
                 justify-content: center;
+                -moz-box-shadow:1px 1px 10px #8A8A8A;
+                -webkit-box-shadow:1px 1px 10px #8A8A8A;
+                box-shadow:1px 1px 10px #8A8A8A;
                 .van-icon{
                     padding-top: 10px;
-                    padding-left: 15px;
+                    padding-left: 26px;
                     color: red;
                 }
                 p{
                     color: black;
                     font-size: small;
                     margin: 0px;
-                    padding-right: 10px;
+                    padding-right: 15px;
+                    padding-left: 15px;
                     padding-bottom: 20px;
                 }
             }
@@ -202,39 +205,13 @@ export default {
                 margin-bottom: 5px;
                 background-color: white;
                 padding: 10px;
+                .bottomIcon{
+                    color: red;
+                    padding-right: 5px;
+                    vertical-align: middle;
+                }
+                span{font-size: 13px;}
             }
         }
     }
-
-    /*.iconStyle{*/
-    /*    padding-left: 15px;*/
-    /*    padding-top: 10px;*/
-    /*    padding-bottom: 10px;*/
-    /*    padding-right: 10px;*/
-    /*}*/
-    /*.hairline{*/
-    /*    border-bottom: 1px solid #dbd7d4;!*连续橙色的线*!*/
-    /*    #routerArrow{*/
-    /*        padding-top: 20px;*/
-    /*        font-size: 16px;*/
-    /*    }*/
-    /*    .iconStyle{*/
-    /*        font-size: 25px;*/
-    /*        padding-left: 20px;*/
-    /*    }*/
-    /*    h4{*/
-    /*        padding-left: 10px;*/
-    /*        font-family: "微软雅黑";*/
-    /*        !*font-size: large;*!*/
-    /*        font-weight: normal;*/
-    /*    }*/
-    /*    p{*/
-    /*        margin: 0px;*/
-    /*    }*/
-    /*}*/
-    /*.points{*/
-    /*    display: flex;*/
-    /*    flex-direction: column;*/
-    /*    text-align: center;*/
-    /*}*/
 </style>

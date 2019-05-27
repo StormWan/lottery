@@ -5,6 +5,7 @@
                 left-text="预览"
                 left-arrow
                 @click-left="onClickLeft"
+                id="head"
         />
         <van-swipe :autoplay="3000" :height="300">
             <van-swipe-item v-for="(image, index) in images" :key="index">
@@ -179,8 +180,10 @@ export default {
         position: absolute;
         width: 100%;
         padding-bottom: 53px;
+        #head{ position: fixed; width: 100%}
         /*轮播图*/
         .van-swipe{
+            padding-top: 50px;
             .van-swipe-item{
                 img{
                     height: 100%;

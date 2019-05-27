@@ -6,31 +6,33 @@
                 left-text=""
                 left-arrow
                 @click-left="onClickLeft"
+                id="head"
         />
-        <van-swipe :autoplay="3000" :height="350">
-            <van-swipe-item v-for="(image, index) in imgGood" :key="index" id="goodsPicture">
-                <img v-lazy="image" />
-            </van-swipe-item>
-        </van-swipe>
-        <div id="imageButtom">
-            <van-row type="flex" justify="space-between">
-                <van-col>
-                    <van-icon name="gift"/>
-                    <span class="span"> 抽奖 | 共 {{goodsNumber}} 份</span>
-                </van-col>
-                <van-col><van-button type="default" size="small" to="./merchant" >阿拉斯加京东自营 赞助 ></van-button></van-col>
-            </van-row>
-        </div>
-        <!--   图片下方信息栏     -->
-        <div id="goodsMessage">
-            <!--     商品开奖时间 + 分享       -->
-            <van-row type="flex" justify="space-between" >
-                <van-col>
-                    <p>{{goodsTitle}}</p>
-                    <span>开奖时间： {{lotteryTime}}</span>
-                </van-col>
-                <van-col>
-                    <van-icon name="more-o" @click="showShareT"/>
+        <div id="body">
+            <van-swipe :autoplay="3000" :height="350">
+                <van-swipe-item v-for="(image, index) in imgGood" :key="index" id="goodsPicture">
+                    <img v-lazy="image" />
+                </van-swipe-item>
+            </van-swipe>
+            <div id="imageButtom">
+                <van-row type="flex" justify="space-between">
+                    <van-col>
+                        <van-icon name="gift"/>
+                        <span class="span"> 抽奖 | 共 {{goodsNumber}} 份</span>
+                    </van-col>
+                    <van-col><van-button type="default" size="small" to="./merchant" >阿拉斯加京东自营 赞助 ></van-button></van-col>
+                </van-row>
+            </div>
+            <!--   图片下方信息栏     -->
+            <div id="goodsMessage">
+                <!--     商品开奖时间 + 分享       -->
+                <van-row type="flex" justify="space-between" >
+                    <van-col>
+                        <p>{{goodsTitle}}</p>
+                        <span>开奖时间： {{lotteryTime}}</span>
+                    </van-col>
+                    <van-col>
+                        <van-icon name="more-o" @click="showShareT"/>
                         <van-dialog v-model="showShare" show-cancel-button class="share">
                             <img :src="imgShare" class="image"/>
                             <h2>独乐乐不如众乐乐</h2>
@@ -39,90 +41,91 @@
                             <van-button type="primary" size="large" @click="storePicture">生成分享图</van-button>
                             <div style="padding-bottom: 10px;"><span @click="toEmbedArticle">嵌入到微信公众号 > </span></div>
                         </van-dialog>
-                    <p class="p">分享</p>
-                </van-col>
-            </van-row>
-            <!--      参加活动后显示      -->
-            <van-row type="flex" justify="center" v-show="afterJoin">
-                <van-col>
-                    <img :src="imgPresent" id="presentBox"/>
-                    <h3>等待开奖，祝您好运</h3>
-                </van-col>
-            </van-row>
-            <van-row type="flex" justify="space-between" class="Boost" v-show="afterJoin">
-                <van-col><img :src="imgIcon" class="image"/></van-col>
-                <van-col>
-                    <p>获得助力</p>
-                    <h3>{{boostNumber}}</h3>
-                </van-col>
-                <van-col>
-                    <p>中奖概率提升</p>
-                    <h3>{{boostMultiple}}倍</h3>
-                </van-col>
-                <van-col> > </van-col>
-            </van-row>
-            <van-button size="large" type="primary" @click="lottery" v-show="lotteryButton">点击抽奖</van-button>
-            <!--      限时好友助力      -->
-            <van-actionsheet v-model="showActionsheet" title="限时好友助力" @select="onSelect" id="actionsheet">
-                <h4>提升中奖概率</h4>
-                <van-row type="flex" justify="center" >
-                    <van-col span="12" id="weichatBoost">
-                        <div  @click="toWeichat">
-                            <img :src="imgWeiChat" class="image"/>
-                            <p>发送至好友/微信群</p>
-                        </div>
-                    </van-col>
-                    <van-col span="12" id="pictureBoost" >
-                        <div @click="storePicture">
-                            <img :src="imgPicture" class="image"/>
-                            <p>生成分享图</p>
-                        </div>
+                        <p class="p">分享</p>
                     </van-col>
                 </van-row>
-                <h3><strong>| </strong>赞助商加倍</h3>
-                <van-row type="flex">
-                    <van-col><img :src="imgWeiChat" class="image"/></van-col>
+                <!--      参加活动后显示      -->
+                <van-row type="flex" justify="center" v-show="afterJoin">
                     <van-col>
-                        <p>{{sponsor}}</p>
-                        <span>{{message}}</span>
+                        <img :src="imgPresent" id="presentBox"/>
+                        <h3>等待开奖，祝您好运</h3>
                     </van-col>
-                    <van-col><van-button type="danger" size="small" to="./merchant" @click="toMerchant">2 倍概率</van-button></van-col>
                 </van-row>
-            </van-actionsheet>
-            <!--     头像信息       -->
-            <div id="personMessage">
-                <span @click="toPersonIcon">{{user}}</span>
-                <van-row type="flex" justify="center" id="imagePosition">
-                    <div class="img_box">
-                        <div v-for="item in items" :key="item ">
-                            <img :src="imgIcon" class="imagePerson">
+                <van-row type="flex" justify="space-between" class="Boost" v-show="afterJoin">
+                    <van-col><img :src="imgIcon" class="image"/></van-col>
+                    <van-col>
+                        <p>获得助力</p>
+                        <h3>{{boostNumber}}</h3>
+                    </van-col>
+                    <van-col>
+                        <p>中奖概率提升</p>
+                        <h3>{{boostMultiple}}倍</h3>
+                    </van-col>
+                    <van-col> > </van-col>
+                </van-row>
+                <van-button size="large" type="primary" @click="lottery" v-show="lotteryButton">点击抽奖</van-button>
+                <!--      限时好友助力      -->
+                <van-actionsheet v-model="showActionsheet" title="限时好友助力" @select="onSelect" id="actionsheet">
+                    <h4>提升中奖概率</h4>
+                    <van-row type="flex" justify="center" >
+                        <van-col span="12" id="weichatBoost">
+                            <div  @click="toWeichat">
+                                <img :src="imgWeiChat" class="image"/>
+                                <p>发送至好友/微信群</p>
+                            </div>
+                        </van-col>
+                        <van-col span="12" id="pictureBoost" >
+                            <div @click="storePicture">
+                                <img :src="imgPicture" class="image"/>
+                                <p>生成分享图</p>
+                            </div>
+                        </van-col>
+                    </van-row>
+                    <h3><strong>| </strong>赞助商加倍</h3>
+                    <van-row type="flex">
+                        <van-col><img :src="imgWeiChat" class="image"/></van-col>
+                        <van-col>
+                            <p>{{sponsor}}</p>
+                            <span>{{message}}</span>
+                        </van-col>
+                        <van-col><van-button type="danger" size="small" to="./merchant" @click="toMerchant">2 倍概率</van-button></van-col>
+                    </van-row>
+                </van-actionsheet>
+                <!--     头像信息       -->
+                <div id="personMessage">
+                    <span @click="toPersonIcon">{{user}}</span>
+                    <van-row type="flex" justify="center" id="imagePosition">
+                        <div class="img_box">
+                            <div v-for="item in items" :key="item ">
+                                <img :src="imgIcon" class="imagePerson">
+                            </div>
+                        </div>
+                    </van-row>
+                    <van-row type="flex" justify="center">
+                        <van-col span="4"><img src="../../assets/image/left.png" class="imageArrow"></van-col>
+                        <van-col span="7"><p>详情介绍</p></van-col>
+                        <van-col span="4"><img src="../../assets/image/right.png" class="imageArrow"></van-col>
+                    </van-row>
+                    <van-field v-model="fieldValue"></van-field>
+                    <!--       商品详情图         -->
+                    <div v-for="item in imgSponsor"  :key="item.id" class="sponsorImg">
+                        <img :src="item">
+                    </div>
+                    <!--       一键复制模板1         -->
+                    <div v-show="cardshow" class="copyField">
+                        <div class="contain2">
+                            <p>{{titleValue}}</p>
+                            <p class="p" id="pll">{{copyValue}}</p>
+                            <van-button alt="Copy to clipboard" type="primary" size="large" class="btn" data-clipboard-target="#pll" @click="copyLink">一键复制</van-button>
                         </div>
                     </div>
-                </van-row>
-                <van-row type="flex" justify="center">
-                    <van-col span="4"><img src="../../assets/image/left.png" class="imageArrow"></van-col>
-                    <van-col span="7"><p>详情介绍</p></van-col>
-                    <van-col span="4"><img src="../../assets/image/right.png" class="imageArrow"></van-col>
-                </van-row>
-                <van-field v-model="fieldValue"></van-field>
-                <!--       商品详情图         -->
-                <div v-for="item in imgSponsor"  :key="item.id" class="sponsorImg">
-                    <img :src="item">
-                </div>
-                <!--       一键复制模板1         -->
-                <div v-show="cardshow" class="copyField">
-                    <div class="contain2">
-                        <p>{{titleValue}}</p>
-                        <p class="p" id="pll">{{copyValue}}</p>
-                        <van-button alt="Copy to clipboard" type="primary" size="large" class="btn" data-clipboard-target="#pll" @click="copyLink">一键复制</van-button>
-                    </div>
-                </div>
-                <!--       一键复制模板2         -->
-                <div v-show="cardshow1" class="copyField">
-                    <div class="contain2">
-                        <p>{{titleValue1}}</p>
-                        <p class="p" id="pl">{{copyValue1}}</p>
-                        <van-button alt="Copy to clipboard" type="primary" size="large" class="btn" data-clipboard-target="#pl" @click="copyLink">一键复制</van-button>
+                    <!--       一键复制模板2         -->
+                    <div v-show="cardshow1" class="copyField">
+                        <div class="contain2">
+                            <p>{{titleValue1}}</p>
+                            <p class="p" id="pl">{{copyValue1}}</p>
+                            <van-button alt="Copy to clipboard" type="primary" size="large" class="btn" data-clipboard-target="#pl" @click="copyLink">一键复制</van-button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -281,202 +284,209 @@ export default {
         position: absolute;
         width: 100%;
         padding-bottom: 53px;
-        /*轮播图*/
-        .van-swipe{
-            .van-swipe-item{
-                img{
-                    height: 100%;
-                    width: 100%;
-                }
-            }
-        }
-        /*商品图片展示*/
-        #goodsPicture{
+        #head{
+            position: fixed;
             width: 100%;
-            height: auto;
         }
-        /*商品下方灰色信息展示*/
-        #imageButtom{
-            position: relative;
-            background-color:#a9a9a9;
-            padding: 5px;
-            vertical-align: middle;
-            .van-icon-gift{
-                font-size: 19px;
-                margin-top: 5px;
+        #body{
+            padding-top: 50px;
+            /*轮播图*/
+            .van-swipe{
+                .van-swipe-item{
+                    img{
+                        height: 100%;
+                        width: 100%;
+                    }
+                }
+            }
+            /*商品图片展示*/
+            #goodsPicture{
+                width: 100%;
+                height: auto;
+            }
+            /*商品下方灰色信息展示*/
+            #imageButtom{
+                position: relative;
+                background-color:#a9a9a9;
+                padding: 5px;
                 vertical-align: middle;
-            }
-            .span{ vertical-align: middle; }
-        }
-        /*商品详细信息*/
-        #goodsMessage{
-            padding: 10px;
-            p{ margin: 0px; }
-            span{
-                color: darkgray;
-                font-family: "微软雅黑 Light";
-                font-size: 13px;
-            }
-            /*分享弹窗*/
-            .share{
-                padding-right: 10px;
-                padding-left: 10px;
-                padding-top: 10px;
-                text-align: center;
-                .image{
-                    width: 150px;
-                    height: 100px;
-                }
-                h2{ margin-bottom: 5px; }
-                p{ padding: 10px; }
-                .van-button--large{
-                    border-radius: 5px;
-                    margin-bottom: 10px;
-                }
-            }
-            /*祝您好运*/
-            h3{
-                color: red;
-                margin-top: 0px;
-                font-weight: normal;
-            }
-            /*分享 icon*/
-            .van-icon-more-o{
-                color: gray;
-                font-size: 22px;
-                padding-left: 2px;
-            }
-            /*参加活动后显示的助力信息*/
-            .Boost{
-                p{
-                    font-size: small;
-                    color: grey;
-                }
-                h3{
-                    color: black;
-                    text-align: center;
-                    padding-top: 5px;
-                }
-            }
-            /*分享*/
-            .p{ color: darkgray;font-size: small; }
-            /*参与活动按钮*/
-            .van-button--large{
-                span{
-                    color: white;
-                    font-family: "微软雅黑 Light";
-                    font-size: 13px
-                }
-            }
-            /*礼物盒子大小*/
-            #presentBox{
-                width: 100px;
-                height: 100px;
-                padding-left: 30px;
-            }
-            /*微信图 + 分享 log*/
-            .image{
-                width: 50px;
-                height: 50px
-            }
-            /*限时好友助力*/
-            #actionsheet{
-                h4{
-                    display: flex;
-                    justify-content: center;
-                    color: gray;
-                    font-weight: normal;
-                    font-size: small;
-                    margin: 8px;
-                }
-                /*微信好友助力*/
-                #weichatBoost{
-                    background-color: #ffd4db;
-                    border-radius: 5px;
-                    padding: 15px;
-                    margin-left: 10px;
-                    margin-right: 10px;
-                    margin-bottom: 10px;
-                    text-align: center;
-                }
-                /*生成分享图助力*/
-                #pictureBoost{
-                    background-color: antiquewhite;
-                    border-radius: 5px;
-                    margin-right: 10px;
-                    margin-bottom: 10px;
-                    padding: 15px;
-                    text-align: center;
-                }
-                /*2 倍概率按钮*/
-                .van-button--small{
-                    margin-left: 20px;
+                .van-icon-gift{
+                    font-size: 19px;
                     margin-top: 5px;
+                    vertical-align: middle;
+                }
+                .span{ vertical-align: middle; }
+            }
+            /*商品详细信息*/
+            #goodsMessage{
+                padding: 10px;
+                p{ margin: 0px; }
+                span{
+                    color: darkgray;
+                    font-family: "微软雅黑 Light";
+                    font-size: 13px;
+                }
+                /*分享弹窗*/
+                .share{
+                    padding-right: 10px;
+                    padding-left: 10px;
+                    padding-top: 10px;
+                    text-align: center;
+                    .image{
+                        width: 150px;
+                        height: 100px;
+                    }
+                    h2{ margin-bottom: 5px; }
+                    p{ padding: 10px; }
+                    .van-button--large{
+                        border-radius: 5px;
+                        margin-bottom: 10px;
+                    }
+                }
+                /*祝您好运*/
+                h3{
+                    color: red;
+                    margin-top: 0px;
+                    font-weight: normal;
+                }
+                /*分享 icon*/
+                .van-icon-more-o{
+                    color: gray;
+                    font-size: 22px;
+                    padding-left: 2px;
+                }
+                /*参加活动后显示的助力信息*/
+                .Boost{
+                    p{
+                        font-size: small;
+                        color: grey;
+                    }
+                    h3{
+                        color: black;
+                        text-align: center;
+                        padding-top: 5px;
+                    }
+                }
+                /*分享*/
+                .p{ color: darkgray;font-size: small; }
+                /*参与活动按钮*/
+                .van-button--large{
                     span{
                         color: white;
                         font-family: "微软雅黑 Light";
-                        font-size: 13px;
+                        font-size: 13px
                     }
                 }
-            }
-            /*头像信息*/
-            #personMessage{
-                text-align: center;
-                #imagePosition{
-                    width: 100%;
-                    .img_box{
-                        width: 100%;
+                /*礼物盒子大小*/
+                #presentBox{
+                    width: 100px;
+                    height: 100px;
+                    padding-left: 30px;
+                }
+                /*微信图 + 分享 log*/
+                .image{
+                    width: 50px;
+                    height: 50px
+                }
+                /*限时好友助力*/
+                #actionsheet{
+                    h4{
                         display: flex;
-                        flex-wrap: wrap;
                         justify-content: center;
-                        div{
-                            width: 30px;
-                            height: 30px;
-                            margin: 2px 2px;
-                            .imagePerson{
-                                width: 100%;
-                                border-radius: 10px;
+                        color: gray;
+                        font-weight: normal;
+                        font-size: small;
+                        margin: 8px;
+                    }
+                    /*微信好友助力*/
+                    #weichatBoost{
+                        background-color: #ffd4db;
+                        border-radius: 5px;
+                        padding: 15px;
+                        margin-left: 10px;
+                        margin-right: 10px;
+                        margin-bottom: 10px;
+                        text-align: center;
+                    }
+                    /*生成分享图助力*/
+                    #pictureBoost{
+                        background-color: antiquewhite;
+                        border-radius: 5px;
+                        margin-right: 10px;
+                        margin-bottom: 10px;
+                        padding: 15px;
+                        text-align: center;
+                    }
+                    /*2 倍概率按钮*/
+                    .van-button--small{
+                        margin-left: 20px;
+                        margin-top: 5px;
+                        span{
+                            color: white;
+                            font-family: "微软雅黑 Light";
+                            font-size: 13px;
+                        }
+                    }
+                }
+                /*头像信息*/
+                #personMessage{
+                    text-align: center;
+                    #imagePosition{
+                        width: 100%;
+                        .img_box{
+                            width: 100%;
+                            display: flex;
+                            flex-wrap: wrap;
+                            justify-content: center;
+                            div{
+                                width: 30px;
+                                height: 30px;
+                                margin: 2px 2px;
+                                .imagePerson{
+                                    width: 100%;
+                                    border-radius: 10px;
+                                }
                             }
                         }
                     }
-                }
-                p{
-                    padding-top: 10px;
-                    padding-left: 20px;
-                    color: darkgray;
-                }
-                .imageArrow{
-                    padding-top: 5px;
-                    width: 80px;
-                    height: 30px;
-                }
-                /*一键复制的样式*/
-                .copyField{
-                    background-color: #f8f8f8;
-                    height: 100%;
-                    width: 100%;
-                    .contain2{
-                        height: 100%;
-                        margin: 10px;
+                    p{
                         padding-top: 10px;
-                        p{
-                            background-color: white;
-                            margin-bottom: 10px;
-                            padding: 10px;
-                            color: blue;
-                        }
-                        .p{
-                            background-color: white;
-                            margin-bottom: 10px;
-                            padding: 10px;
-                            color: black;
+                        padding-left: 20px;
+                        color: darkgray;
+                    }
+                    .imageArrow{
+                        padding-top: 5px;
+                        width: 80px;
+                        height: 30px;
+                    }
+                    /*一键复制的样式*/
+                    .copyField{
+                        background-color: #f8f8f8;
+                        height: 100%;
+                        width: 100%;
+                        .contain2{
+                            height: 100%;
+                            margin: 10px;
+                            padding-top: 10px;
+                            p{
+                                background-color: white;
+                                margin-bottom: 10px;
+                                padding: 10px;
+                                color: blue;
+                            }
+                            .p{
+                                background-color: white;
+                                margin-bottom: 10px;
+                                padding: 10px;
+                                color: black;
+                            }
                         }
                     }
-                }
-                /*商家图片的样式*/
-                .sponsorImg {
-                    img {
-                        width: 100%;
+                    /*商家图片的样式*/
+                    .sponsorImg {
+                        img {
+                            width: 100%;
+                        }
                     }
                 }
             }

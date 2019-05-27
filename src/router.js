@@ -131,6 +131,17 @@ const router = new Router({
         default: () => import('./views/about/index.vue'),
         tabbar: () => import('./components/tabbar/index.vue')
       }
+    },
+    {
+      path: '/setting', // 我的页面
+      name: 'setting',
+      meta: {
+        keepAlive: true,
+        noAuth: true// 处理不需要登录的页面
+      },
+      components: {
+        default: () => import('./views/about/setting/index.vue')
+      }
     }
   ]
 

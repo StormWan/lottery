@@ -5,38 +5,41 @@
                 left-text="嵌入到微信公众号"
                 left-arrow
                 @click-left="onClickLeft"
+                id="head"
         />
-        <div id="top">
-            <van-row type="flex" class="background">
-                <van-col><van-icon name="column"/></van-col>
-                <van-col><p>小程序卡片</p></van-col>
-            </van-row>
-            <div id="card">
-                <div id="productCard">
-                    <van-row type="flex">
-                        <van-col span="16" class="imageBox">
-                            <img :src="img" id="productImg"/> <!-- -->
-                        </van-col>
-                        <van-col span="8" style="background-color: #ffd4db;border-top-right-radius: 10px;">
-                            <div class="imageBox"><img :src="imgFunnel" id="iconImg"/></div>
-                            <p>活动开奖时间</p>
-                            <h4>{{lotteryTime}}</h4>
-                            <van-button type="danger" size="normal">立即抽奖</van-button>
-                        </van-col>
-                    </van-row>
-                    <p class="p">{{message}}</p>
+        <div id="body">
+            <div id="top">
+                <van-row type="flex" class="background">
+                    <van-col><van-icon name="column"/></van-col>
+                    <van-col><p>小程序卡片</p></van-col>
+                </van-row>
+                <div id="card">
+                    <div id="productCard">
+                        <van-row type="flex">
+                            <van-col span="16" class="imageBox">
+                                <img :src="img" id="productImg"/> <!-- -->
+                            </van-col>
+                            <van-col span="8" style="background-color: #ffd4db;border-top-right-radius: 10px;">
+                                <div class="imageBox"><img :src="imgFunnel" id="iconImg"/></div>
+                                <p>活动开奖时间</p>
+                                <h4>{{lotteryTime}}</h4>
+                                <van-button type="danger" size="normal">立即抽奖</van-button>
+                            </van-col>
+                        </van-row>
+                        <p class="p">{{message}}</p>
+                    </div>
+                    <div id="a"><a :href="imgSrc" @click="downloadImga()" download="p.jpg">保存图片( 1080 x 864 )</a></div>
                 </div>
-                <div id="a"><a :href="imgSrc" @click="downloadImga()" download="p.jpg">保存图片( 1080 x 864 )</a></div>
             </div>
-        </div>
-        <div id="buttom">
-            <van-row type="flex" class="background">
-                <van-col><van-icon name="ellipsis"/></van-col>
-                <van-col><p>关联路径</p></van-col>
-            </van-row>
-            <div id="linkRoute">
-                <p class="pLink" id="pl">{{link}}</p>
-                <van-button alt="Copy to clipboard" type="danger" size="large" class="btn" data-clipboard-target="#pl" @click="copyLink">复制链接</van-button>
+            <div id="buttom">
+                <van-row type="flex" class="background">
+                    <van-col><van-icon name="ellipsis"/></van-col>
+                    <van-col><p>关联路径</p></van-col>
+                </van-row>
+                <div id="linkRoute">
+                    <p class="pLink" id="pl">{{link}}</p>
+                    <van-button alt="Copy to clipboard" type="danger" size="large" class="btn" data-clipboard-target="#pl" @click="copyLink">复制链接</van-button>
+                </div>
             </div>
         </div>
     </div>
@@ -111,6 +114,10 @@ export default {
         position: absolute;
         height: 100%;
         width: 100%;
+        #head{
+            position: fixed;
+            width: 100%;
+        }
         .van-button{ border-radius: 10px; }
         .van-button--large{
             margin-top: 10px;
@@ -128,75 +135,81 @@ export default {
             color: black;
             font-size: 15px;
         }
-        #top{
-            margin: 15px;
-            margin-top: 20px;
-            position: relative;
-            background-color: #f8f8f8;
-            #card{
-                background-color: white;
-                padding-top: 5px;
-                padding-bottom: 10px;
-                #productCard{
+        #body{
+            padding-top: 40px;
+            /*小程序卡片*/
+            #top{
+                margin: 15px;
+                margin-top: 20px;
+                position: relative;
+                background-color: #f8f8f8;
+                #card{
+                    background-color: white;
+                    padding-top: 5px;
                     padding-bottom: 10px;
-                    border-radius: 10px;
-                    margin: 10px;
-                    p{ margin-bottom: 0px; }
-                    h4{ margin-top: 10px; }
-                    .imageBox{
-                        display: flex;
-                        justify-content: center;
-                        #productImg{
-                            width: 100%;
-                            height: 200px;
-                            border-top-left-radius: 10px;
+                    #productCard{
+                        padding-bottom: 10px;
+                        border-radius: 10px;
+                        margin: 10px;
+                        p{ margin-bottom: 0px; }
+                        h4{ margin-top: 10px; }
+                        .imageBox{
+                            display: flex;
+                            justify-content: center;
+                            #productImg{
+                                width: 100%;
+                                height: 200px;
+                                border-top-left-radius: 10px;
+                            }
+                            #iconImg{
+                                width: 30px;
+                                height: 30px;
+                                padding-top: 15px;
+                            }
                         }
-                        #iconImg{
-                            width: 30px;
-                            height: 30px;
-                            padding-top: 15px;
-                        }
-                    }
-                    .p{
-                        padding-bottom: 15px;
-                        padding-top: 10px;
-                        padding-left: 10px;
-                        margin: 0px;
-                        border-bottom-right-radius: 10px;
-                        border-bottom-left-radius: 10px;
-                        background-color: #f44;
-                        text-align: left;
-                        color: white;
-                        font-weight: lighter;
-                        font-size: 13px;
+                        .p{
+                            padding-bottom: 15px;
+                            padding-top: 10px;
+                            padding-left: 10px;
+                            margin: 0px;
+                            border-bottom-right-radius: 10px;
+                            border-bottom-left-radius: 10px;
+                            background-color: #f44;
+                            text-align: left;
+                            color: white;
+                            font-weight: lighter;
+                            font-size: 13px;
 
+                        }
                     }
+                    #a{
+                        max-width: 100%;
+                        background-color: #f44;
+                        padding-top: 15px;
+                        padding-bottom: 15px;
+                        border-radius: 30px;
+                        margin-left: 10px;
+                        margin-right: 10px;
+                    }
+                    a{color: white}
                 }
-                #a{
-                    max-width: 100%;
-                    background-color: #f44;
-                    padding-top: 15px;
-                    padding-bottom: 15px;
-                    border-radius: 30px;
-                    margin-left: 10px;
-                    margin-right: 10px;
-                }
-                a{color: white}
             }
-        }
-        #buttom{
-            padding: 15px;
-            position: relative;
-            #linkRoute{
-                padding: 10px;
-                background-color: white;
-                .pLink{
-                    background-color: #f8f8f8;
-                    padding-top: 15px;
-                    padding-bottom: 15px;
-                    border-radius: 5px;
-                    margin-bottom: 5px;
-                    margin-top: 5px;
+            /*关联路径*/
+            #buttom{
+                background-color: #eeeeee;
+                padding: 15px;
+                position: relative;
+                #linkRoute{
+                    padding: 10px;
+                    background-color: white;
+                    .pLink{
+                        background-color: #f8f8f8;
+                        padding-top: 15px;
+                        padding-bottom: 15px;
+                        border-radius: 5px;
+                        margin-bottom: 5px;
+                        margin-top: 5px;
+                    }
                 }
             }
         }

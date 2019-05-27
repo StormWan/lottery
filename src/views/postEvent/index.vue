@@ -5,6 +5,7 @@
                 left-text="发起活动"
                 left-arrow
                 @click-left="onClickLeft"
+                id="head"
         />
         <div id="body">
             <van-row type="flex" class="title">
@@ -348,17 +349,16 @@ export default {
             padding-right: 20px;
             color: darkgrey;
         }
+        #head{ position: fixed; width: 100%}
         #body{
             padding-left: 10px;
             padding-right: 10px;
-            padding-top: 10px;
+            padding-top: 60px;
             height: 100%;
             #basicSettings{
                 background-color: white;
                 padding: 10px;
                 margin-bottom: 10px;
-                /*开奖方式的样式*/
-                /*#p{ margin-top: 5px;margin-bottom: 0px; }*/
                 /*商品数量的 stepper*/
                 #stepper{ padding-top: 5px;}
                 .van-icon{

@@ -9,31 +9,27 @@
         <div id="contain">
             <div id="picText">
                 <p>图文编辑</p>
-                <van-row type="flex" justify="center">
+                <van-row type="flex"  justify="center">
+                    <div id="button_box">
                     <van-col>
-                        <div class="info">
-                            <span class="iconInfo">{{fieldNumber}}/1</span>
-                            <van-button @click="filedShow"><van-icon name="notes-o"/>插入文本</van-button>
-                        </div>
+                        <span class="iconInfo">{{fieldNumber}}/1</span>
+                        <van-button @click="filedShow"  plain type="danger" size="small"><van-icon name="notes-o" size="20px"/>插入文本</van-button>
                     </van-col>
                     <van-col>
-                        <div class="info">
-                            <span class="iconInfo">{{pictureNumber}}/9</span>
-                            <van-uploader :after-read="onRead" name="商品图" :max-size="maxSize" @oversize="oversize" accept="image/jpg, image/jpeg, image/png">
-                                <van-button><van-icon name="photo"/>插入图片</van-button>
-                            </van-uploader>
-                        </div>
+                        <span class="iconInfo">{{pictureNumber}}/9</span>
+                        <van-uploader :after-read="onRead" name="商品图" :max-size="maxSize" @oversize="oversize" accept="image/jpg, image/jpeg, image/png">
+                            <van-button  plain type="danger" size="small"><van-icon name="photo" size="20px"/>插入图片</van-button>
+                        </van-uploader>
                     </van-col>
                     <van-col>
-                        <div class="info">
-                            <span class="iconInfo">{{copyNumber}}/2</span>
-                            <van-button @click="copyShow"><van-icon name="graphic"/>一键复制</van-button>
-                        </div>
+                        <span class="iconInfo">{{copyNumber}}/2</span>
+                        <van-button @click="copyShow"  plain type="danger" size="small"><van-icon name="graphic" size="20px"/>一键复制</van-button>
                     </van-col>
+                    </div>
                 </van-row>
                 <!--       插入文本内容         -->
                 <div v-show="field" id="inputField">
-                    <van-icon name="clear" size="20px" class="icon" @click="fieldShow" />
+                    <van-icon name="clear" size="20px" class="clearIcon" @click="fieldShow" />
                     <van-field v-model="fieldValue" placeholder="请输入文本内容" />
                 </div>
                 <!--       上传图片         -->
@@ -43,7 +39,7 @@
                 </div>
                 <!--       复制文本 - 一键复制         -->
                 <div v-show="copyCard">
-                    <van-icon name="clear" size="20px" class="icon" @click="copyShowCard" />
+                    <van-icon name="clear" size="20px" class="clearIcon" @click="copyShowCard" />
                     <div class="copyField">
                         <div class="contain2">
                             <van-field v-model="titleValue" placeholder="请填写标题引导语"/>
@@ -52,8 +48,8 @@
                         </div>
                     </div>
                 </div>
-                <div v-show="copyCard1">
-                    <van-icon name="clear" size="20px" class="icon" @click="copyShowCard1" />
+                <div v-show="copyCard1" >
+                    <van-icon name="clear" size="20px" class="clearIcon" @click="copyShowCard1" />
                     <div class="copyField">
                         <div class="contain2">
                             <van-field v-model="titleValue1" placeholder="请填写标题引导语"/>
@@ -69,7 +65,7 @@
 </template>
 
 <script>
-import { NavBar, Row, Col, Button, Field, Toast, Uploader } from 'vant'
+import { Button, Col, Field, NavBar, Row, Toast, Uploader } from 'vant'
 
 export default {
   name: 'sponsor',
@@ -212,39 +208,42 @@ export default {
         #contain{
             #picText{
                 background-color: white;
-                padding: 10px;
+                padding: 5px;
                 margin: 10px;
                 padding-bottom: 100px;
-                position: absolute;
-                .icon{
+                /*clearIcon 的样式*/
+                .clearIcon{
                     position: relative;
                     color: red;
                     left: 95%;
-                    top: 25px;
+                    top: 20px;
                     z-index: 999;
                 }
-                #inputField{
-                    width: 100%;
-                    .van-field{background-color: #f8f8f8;}
-                    .icon{
-                        top: 10px;
-                        left: 95%;
+                /*按钮的样式*/
+                #button_box{
+                    position: relative;
+                    .van-col{
+                        width: 95px;
+                        /* button 里面的 icon 垂直居中*/
+                        .van-icon{vertical-align: middle; }
+                        /*按钮右上角的数字显示*/
+                        .iconInfo{
+                            position: relative;
+                            font-size: 10px;
+                            background-color: red;
+                            padding: 1px;
+                            border-bottom-left-radius: 10px;
+                            color: white;
+                            left: 67px;
+                            top: 15px;
+                            z-index: 999;
+                        }
                     }
                 }
-                /*按钮右上角的数字显示*/
-                .info{
-                    width: 100%;
-                    .iconInfo{
-                        font-size: 10px;
-                        background-color: red;
-                        padding: 2px;
-                        border-bottom-left-radius: 50px;
-                        position: relative;
-                        color: white;
-                        left: 83px;
-                        top: 18px;
-                        z-index: 999;
-                    }
+                /*输入文本框*/
+                #inputField{
+                    .van-field{background-color: #f8f8f8;}
+                    .clearIcon{ top: 10px;}
                 }
                 /*一键复制的样式*/
                 .copyField{
@@ -260,7 +259,6 @@ export default {
                             margin-bottom: 10px;
                         }
                     }
-
                 }
                 /*插入图片那的样式*/
                 .uploader{

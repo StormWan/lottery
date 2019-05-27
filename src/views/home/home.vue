@@ -6,9 +6,11 @@
                 <van-col><p>今日活动</p></van-col>
             </van-row>
         </div>
-        <tab-card merchant="社区生活" goods="Switch 游戏机" goodsNumber="2" :introduction="introduction" toRouter="./activityDetail" :logo="img"></tab-card>
-        <tab-card merchant="贝贝宝婴" goods="BB 奶嘴" goodsNumber="2" :introduction="introduction"/>
-        <tab-card merchant="社区生活" goods="Switch 游戏机" goodsNumber="2" :introduction="introduction"/>
+        <div id="body">
+            <tab-card merchant="社区生活" goods="Switch 游戏机" goodsNumber="2" :introduction="introduction" toRouter="./activityDetail" :logo="img"></tab-card>
+            <tab-card merchant="贝贝宝婴" goods="BB 奶嘴" goodsNumber="2" :introduction="introduction"/>
+            <tab-card merchant="社区生活" goods="Switch 游戏机" goodsNumber="2" :introduction="introduction"/>
+        </div>
     </div>
 </template>
 
@@ -59,6 +61,8 @@ export default {
             /*border-bottom: 1px solid #c8c8c8;*/
             margin-bottom: 10px;
             background-color: white;
+            position: fixed;
+            width: 100%;
             .van-icon {
                 font-size: x-large;
                 color: red;
@@ -66,6 +70,9 @@ export default {
                 padding-left: 10px;
                 padding-right: 5px;
             }
+        }
+        #body{
+            padding-top: 60px;
         }
     }
 </style>
