@@ -50,7 +50,7 @@
                     </van-row>
                 </div>
                 <van-popup v-model="show" position="bottom" :overlay="false">
-                    <van-picker show-toolbar :columns="columns" @confirm="show = false" @cancel="show = false" @change="onChange"/>
+                    <van-picker show-toolbar :columns="columns" @confirm="show = true" @cancel="show = false" @change="onChange"/>
                 </van-popup>
                 <div  @click="show1 = true" v-show="chooseTime">
                     <field-date-card ref="msg" v-on:lotteryTime="lotteryTimeByValue" label="开奖时间" type="datetime" :max-date="maxDate" :min-date="minDate"/>
