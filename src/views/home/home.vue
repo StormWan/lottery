@@ -7,8 +7,8 @@
             </van-row>
         </div>
         <div id="body">
-            <tab-card merchant="社区生活" goods="Switch 游戏机" goodsNumber="2" :introduction="introduction" toRouter="./activityDetail" :logo="img"></tab-card>
-            <tab-card merchant="贝贝宝婴" goods="BB 奶嘴" goodsNumber="2" :introduction="introduction"/>
+            <tab-card merchant="社区生活" goods="Switch 游戏机" goodsNumber="2" :introduction="introduction" toRouter="./activityDetail" :logo="img" :image="goodsImg"></tab-card>
+            <tab-card merchant="贝贝宝婴" goods="BB 奶嘴" goodsNumber="2" :introduction="introduction" :logo="img"/>
             <tab-card merchant="社区生活" goods="Switch 游戏机" goodsNumber="2" :introduction="introduction"/>
         </div>
     </div>
@@ -25,7 +25,8 @@ export default {
     return {
       products: [],
       introduction: '本活动由机密小程序举办，奖品发放、质量、售后服务等均由其负责。中奖用户请留下地址、手机和姓名，机密小程序会联系您发放奖品',
-      img: require('../../assets/image/person.png')
+      img: require('../../assets/image/person.png'),
+      goodsImg: require('../../assets/image/switch.jpg')
     }
   },
   components: {
